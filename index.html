@@ -1,0 +1,2408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Epiphany Oarhe — The24thdayy | Artist Portfolio</title>
+  <meta name="description" content="Portfolio of Epiphany Oarhe (@The24thdayy) — self-taught digital artist from Benin City, Nigeria. Between Life and a Canvas." />
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    crossorigin="anonymous" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Special+Elite&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* ═══════════════════════════════════════════════════
+       DESIGN TOKENS
+       Global CSS custom properties — colours, typefaces,
+       spacing constants, and shadow presets used site-wide.
+    ═══════════════════════════════════════════════════ */
+    :root {
+      --cream:      #f0ead8;
+      --cream-mid:  #e5dcc8;
+      --cream-dark: #d0c4a0;
+      --ink:        #1e1b11;
+      --olive:      #4e4618;
+      --olive-lt:   #7a6e28;
+      --rust:       #9e2e12;
+      --gold:       #b8962e;
+      --gold-lt:    #d4b050;
+
+      --f-display: 'Bebas Neue', sans-serif;
+      --f-body:    'Cormorant Garamond', Georgia, serif;
+      --f-accent:  'Special Elite', cursive;
+
+      --nav-h: 70px;
+      --ease:  cubic-bezier(0.16, 1, 0.3, 1);
+      --t:     0.4s;
+
+      --sh-sm: 0 2px 12px rgba(30,27,17,.08);
+      --sh-md: 0 8px 32px rgba(30,27,17,.13);
+      --sh-lg: 0 20px 60px rgba(30,27,17,.2);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       RESET & BASE
+       Box-model normalisation, smooth scrolling, base
+       typography, global link/button defaults, and the
+       grain texture overlay applied on top of everything.
+    ═══════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: var(--f-body);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      cursor: none;
+    }
+    @media (max-width: 900px) { body { cursor: auto; } }
+    img { max-width: 100%; display: block; }
+    a   { text-decoration: none; color: inherit; }
+    button { font-family: inherit; }
+    ::selection { background: rgba(184,150,46,.25); color: var(--ink); }
+    :focus-visible { outline: 1.5px solid var(--gold); outline-offset: 3px; }
+
+    /* Grain texture overlay — sits above all content via z-index 9000,
+       pointer-events:none so it never blocks clicks. Creates a paper-like feel. */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9000;
+      opacity: 0.45;
+    }
+
+    ::-webkit-scrollbar       { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--cream-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+    /* ═══════════════════════════════════════════════════
+       PAINTBRUSH CURSOR  (desktop only — hidden on ≤900px)
+       The SVG cursor element follows the mouse at the
+       bristle tip. The canvas beneath it draws a fading
+       paint-trail stroke. Both are hidden on touch devices.
+    ═══════════════════════════════════════════════════ */
+    #brush-cursor {
+      position: fixed; top: 0; left: 0;
+      width: 30px; height: 30px;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-200px,-200px) rotate(-35deg);
+      will-change: transform;
+    }
+    #brush-cursor svg { width: 100%; height: 100%; }
+    #brush-canvas {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 9998;
+    }
+    @media (max-width: 900px) {
+      #brush-cursor, #brush-canvas { display: none; }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SCROLL REVEAL
+       Elements with .reveal start fully visible (opacity:1,
+       no transform). The JS observer adds .will-animate to
+       off-screen elements before marking them .visible when
+       they enter the viewport. An 800ms fallback ensures
+       nothing stays hidden if IntersectionObserver is slow.
+    ═══════════════════════════════════════════════════ */
+    .reveal { opacity: 1; transform: none; transition: opacity .85s var(--ease), transform .85s var(--ease); }
+    .reveal.will-animate         { opacity: 0; transform: translateY(28px); }
+    .reveal.will-animate.visible { opacity: 1; transform: translateY(0); }
+    .stagger .reveal:nth-child(2).will-animate { transition-delay: .13s; }
+    .stagger .reveal:nth-child(3).will-animate { transition-delay: .26s; }
+    .stagger .reveal:nth-child(4).will-animate { transition-delay: .39s; }
+
+    /* ═══════════════════════════════════════════════════
+       LAYOUT — SECTION WRAPPERS & SHARED TYPOGRAPHY
+       Shared section padding, background variants (light,
+       dark, mid-cream), section labels, heading sizes,
+       and the decorative gold rule used under each title.
+    ═══════════════════════════════════════════════════ */
+    .section     { padding: 100px 7vw; position: relative; }
+    .section-dark {
+      background:
+        radial-gradient(ellipse 70% 50% at 90% 0%, rgba(184,150,46,.07) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 60% at 5% 100%, rgba(158,46,18,.06) 0%, transparent 45%),
+        linear-gradient(160deg, #1f1d12 0%, #1a1810 50%, #161408 100%);
+      color: var(--cream);
+      box-shadow: inset 0 1px 0 rgba(184,150,46,.09),
+                  inset 0 80px 120px -60px rgba(184,150,46,.04);
+    }
+    .section-mid { background: var(--cream-mid); }
+
+    .section-label {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-family: var(--f-accent); font-size: .66rem;
+      letter-spacing: .38em; color: var(--gold);
+      margin-bottom: 10px; text-transform: uppercase;
+    }
+    .section-label::before {
+      content: ''; width: 22px; height: 1px;
+      background: var(--gold); opacity: .55; flex-shrink: 0;
+    }
+    .section-dark .section-label { color: rgba(212,176,80,.5); }
+    .section-dark .section-label::before { opacity: .28; }
+
+    .section-title {
+      font-family: var(--f-display);
+      font-size: clamp(2.8rem,6vw,5rem);
+      letter-spacing: .06em; line-height: .95;
+      color: var(--olive); margin-bottom: 18px;
+    }
+    .section-dark .section-title { color: var(--gold); }
+
+    .rule {
+      width: 36px; height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent);
+      margin-bottom: 52px;
+    }
+    .section-dark .rule { opacity: .5; }
+
+    /* ═══════════════════════════════════════════════════
+       NAVIGATION
+       Fixed top bar that gains a frosted-glass background
+       (.bg) once the user scrolls past 30px. Desktop shows
+       inline links; mobile collapses to a hamburger toggle
+       that opens the full-screen slide-in drawer.
+    ═══════════════════════════════════════════════════ */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--nav-h); z-index: 500;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 0 7vw;
+      transition: background var(--t) var(--ease), box-shadow var(--t) var(--ease);
+    }
+    #nav.bg {
+      background: rgba(236,230,216,.97);
+      backdrop-filter: blur(18px) saturate(1.3);
+      -webkit-backdrop-filter: blur(18px) saturate(1.3);
+      box-shadow: 0 1px 0 rgba(78,70,24,.1), var(--sh-sm);
+    }
+    .nav-logo {
+      font-family: var(--f-display); font-size: 1.55rem;
+      letter-spacing: .14em; color: var(--olive);
+      transition: opacity var(--t);
+    }
+    .nav-logo:hover { opacity: .65; }
+    .nav-logo em { color: var(--rust); font-style: normal; }
+    .nav-links { display: flex; gap: 32px; list-style: none; align-items: center; font-weight: bold;}
+    .nav-links a {
+      font-family: var(--f-accent); font-size: 0.8rem;
+      letter-spacing: .16em; color: var(--ink);
+      position: relative; padding-bottom: 4px;
+      transition: color var(--t); text-transform: uppercase;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px; background: var(--rust);
+      transition: width .5s var(--ease);
+    }
+    .nav-links a:hover { color: var(--rust); }
+    .nav-links a:hover::after { width: 100%; }
+    #nav-toggle {
+      display: none; background: none; border: none;
+      color: var(--olive); font-size: 1.35rem; cursor: pointer;
+      transition: color var(--t);
+    }
+    #nav-toggle:hover { color: var(--rust); }
+
+    /* Mobile nav drawer — slides in from the right, covers the full screen.
+       Visibility is toggled via the .open class added/removed by JS.
+       Font size is intentionally large for touch targets but kept proportional. */
+    #nav-drawer {
+      position: fixed; inset: 0; background: var(--cream);
+      z-index: 550; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 28px;
+      visibility: hidden; opacity: 0; transform: translateX(100%);
+      overflow: hidden;
+      transition: transform .45s cubic-bezier(.77,0,.18,1),
+                  opacity .4s ease, visibility 0s linear .45s;
+    }
+    #nav-drawer.open {
+      visibility: visible; opacity: 1; transform: translateX(0);
+      transition: transform .45s cubic-bezier(.77,0,.18,1),
+                  opacity .4s ease, visibility 0s;
+    }
+    /* Drawer nav links */
+    #nav-drawer .dl {
+      font-family: var(--f-display); font-size: clamp(1.6rem, 6vw, 2.4rem);
+      letter-spacing: .1em; color: var(--olive);
+      transition: color var(--t), letter-spacing .5s var(--ease);
+      display: block; text-align: center;
+    }
+    #nav-drawer .dl:hover { color: var(--rust); letter-spacing: .16em; }
+    #drawer-close {
+      position: absolute; top: 0; right: 7vw;
+      height: var(--nav-h);
+      display: flex; align-items: center;
+      background: none; border: none; font-size: 1.35rem;
+      color: var(--olive); cursor: pointer;
+      transition: color var(--t), transform var(--t);
+    }
+    #drawer-close:hover { color: var(--rust); transform: rotate(90deg); }
+
+    /* ═══════════════════════════════════════════════════
+       HERO SECTION
+       Full-viewport opening panel. The right half holds a
+       crossfading slideshow of artwork images. The left
+       panel has a hatched cream background with a diagonal
+       clip-path. All hero text elements animate in
+       individually via staggered keyframe delays.
+    ═══════════════════════════════════════════════════ */
+    #hero {
+      min-height: 100vh;
+      padding: calc(var(--nav-h) + 80px) 7vw 100px;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      position: relative; overflow: hidden;
+    }
+    /* Slideshow: images stack absolutely, crossfade via opacity transition */
+    #hero-slides {
+      position: absolute; inset: 0;
+      overflow: hidden; z-index: 0;
+    }
+    .hero-slide {
+      position: absolute;
+      top: 0; right: 0;
+      width: 55%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0;
+      transform: scale(1.06);
+      transition: opacity 1.6s cubic-bezier(0.4,0,0.2,1), transform 6s cubic-bezier(0.16,1,0.3,1);
+      will-change: opacity, transform;
+    }
+    .hero-slide.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+    /* Gradient feather — blends the slideshow edge into the cream panel on the left */
+    #hero-slides::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 38%; z-index: 2;
+      background: linear-gradient(to right, #cdc19d 0%, #cdc19d 18%, transparent 100%);
+      pointer-events: none;
+    }
+    @media (max-width: 560px) {
+      .hero-slide { width: 100%; opacity: 0.22; }
+      #hero-slides::before { width: 100%; background: linear-gradient(to bottom, transparent 40%, #cdc19d 100%); }
+    }
+    #hero::after {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 65%; height: 100%;
+      background-color: #cdc19d;
+      background-image:
+        repeating-linear-gradient( 45deg,rgba(78,70,24,.055) 0,rgba(78,70,24,.055) 1px,transparent 0,transparent 50%),
+        repeating-linear-gradient(-45deg,rgba(78,70,24,.055) 0,rgba(78,70,24,.055) 1px,transparent 0,transparent 50%);
+      background-size: 10px 10px;
+      clip-path: polygon(0 0,100% 0,72% 100%,0 100%);
+      box-shadow: inset -120px 0 160px -40px rgba(20,17,8,.22),
+                  inset 0 -120px 160px -40px rgba(20,17,8,.14),
+                  inset 0 0 200px rgba(184,150,46,.07);
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 680px; }
+
+    @keyframes hero-up {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: none; }
+    }
+    .hero-eyebrow { animation: hero-up .9s var(--ease) .1s  both; }
+    .hero-name    { animation: hero-up 1s  var(--ease) .22s both; }
+    .hero-handle  { animation: hero-up .9s var(--ease) .38s both; }
+    .hero-tagline { animation: hero-up .9s var(--ease) .52s both; }
+    .hero-cta     { animation: hero-up .9s var(--ease) .66s both; }
+    .scroll-hint  { animation: hero-up 1.1s var(--ease) 1s  both; }
+
+    .hero-eyebrow {
+      font-family: var(--f-accent); font-size: .7rem;
+      letter-spacing: .32em; color: var(--olive-lt);
+      margin-bottom: 22px;
+      display: flex; align-items: center; gap: 16px;
+      text-transform: uppercase;
+    }
+    .hero-eyebrow::before {
+      content: ''; width: 32px; height: 1px;
+      background: linear-gradient(to right,var(--gold),transparent);
+      flex-shrink: 0;
+    }
+    .hero-name {
+      font-family: var(--f-display);
+      font-size: clamp(4rem,13vw,8rem);
+      line-height: .87; color: var(--olive); letter-spacing: .025em;
+      text-shadow: 2px 4px 18px rgba(20,17,8,.14), 0 1px 0 rgba(20,17,8,.08);
+    }
+    .hero-name span { color: var(--rust); }
+    .hero-handle {
+      font-family: var(--f-accent);
+      font-size: clamp(1.17rem, 1.95vw, 1.425rem); /* 150% of the larger clamp value */
+      color: var(--rust); letter-spacing: .2em;
+      margin-top: 18px; opacity: .82; text-transform: uppercase;
+      font-weight: bolder;
+    }
+    .hero-tagline {
+      font-family: var(--f-body); font-size: clamp(1rem,1.5vw,1.15rem);
+      font-style: italic; font-weight: 500; color: var(--ink);
+      max-width: 360px; margin-top: 22px; opacity: .72; line-height: 1.72;
+    }
+    /* Hero social icon links — square bordered buttons with hover lift */
+    .hero-socials {
+      display: flex; align-items: center; gap: 18px;
+      margin-top: 36px; margin-bottom: 4px;
+    }
+    .hero-social-link {
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(78,70,24,.35);
+      color: var(--olive-lt); font-size: .88rem;
+      transition: background var(--t) var(--ease), color var(--t), border-color var(--t), transform .3s var(--ease);
+    }
+    .hero-social-link:hover {
+      background: var(--olive); color: var(--cream);
+      border-color: var(--olive); transform: translateY(-3px);
+    }
+
+    /* inprnt SVG logo — inherits the same colour transitions as the icon links */
+    .inprnt-logo {
+      fill: var(--olive-lt);
+      transition: fill 0.3s ease;
+    }
+
+    .inprnt-logo:hover {
+      fill: var(--cream);
+    }
+
+    /* Hero CTA button row */
+    .hero-btns {
+      display: inline-flex; align-items: center; gap: 14px;
+      flex-wrap: wrap; margin-top: 18px;
+    }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 14px 34px;
+      border: 1px solid var(--olive); background: var(--olive); color: var(--cream);
+      font-family: var(--f-accent); font-size: .72rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      box-shadow: var(--sh-sm);
+      transition: background var(--t) var(--ease), color var(--t) var(--ease),
+                  transform .4s var(--ease), box-shadow .4s var(--ease);
+    }
+    .hero-cta:hover {
+      background: transparent; color: var(--olive);
+      transform: translateY(-3px);
+      box-shadow: var(--sh-md), 0 0 40px rgba(184,150,46,.18);
+    }
+    .hero-cta-outline {
+      background: transparent; color: var(--olive);
+      border: 1px solid rgba(78,70,24,.45);
+    }
+    .hero-cta-outline:hover {
+      background: var(--olive); color: var(--cream);
+    }
+    .scroll-hint {
+      position: absolute; bottom: 36px; right: 7vw; z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      writing-mode: vertical-rl;
+      font-family: var(--f-accent); font-size: .58rem;
+      letter-spacing: .36em; color: var(--olive-lt); opacity: .62;
+    }
+    .scroll-hint::after {
+      content: ''; width: 1px; height: 56px;
+      background: linear-gradient(to bottom,var(--gold),transparent);
+      animation: pulse-line 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse-line {
+      0%,100% { transform: scaleY(.1); opacity: .2; transform-origin: top; }
+      50%      { transform: scaleY(1);  opacity: .9; transform-origin: top; }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       ARTIST STATEMENT
+       Dark-background section with a centred text column,
+       a pull-quote styled with a left border, and body
+       paragraphs in reduced-opacity cream.
+    ═══════════════════════════════════════════════════ */
+    .statement-inner { max-width: 780px; margin: 0 auto; }
+    .statement-pull {
+      font-family: var(--f-body); font-size: clamp(1.1rem,1.9vw,1.38rem);
+      color: var(--gold-lt); font-style: italic; font-weight: 300;
+      margin-bottom: 38px; line-height: 1.72;
+      border-left: 1px solid rgba(212,176,80,.28); padding-left: 22px;
+    }
+    #statement p {
+      font-size: clamp(1rem,1.4vw,1.12rem);
+      color: rgba(240,234,216,.76);
+      margin-bottom: 22px; font-weight: 300; line-height: 1.9;
+    }
+    #statement em { font-style: italic; color: var(--gold-lt); }
+
+    /* ═══════════════════════════════════════════════════
+       BIO
+       Two-column grid: portrait on the left (with a
+       decorative offset-border pseudo-element), bio text
+       on the right. Collapses to a single column on tablet.
+    ═══════════════════════════════════════════════════ */
+    .bio-grid { display: grid; grid-template-columns: 270px 1fr; gap: 72px; align-items: start; }
+    .bio-portrait-wrap { position: relative; }
+    .bio-portrait-wrap::before {
+      content: ''; position: absolute; inset: -20px;
+      background: radial-gradient(ellipse at 40% 30%,rgba(184,150,46,.12) 0%,transparent 70%);
+      pointer-events: none;
+    }
+    .bio-portrait-wrap::after {
+      content: ''; position: absolute;
+      top: 14px; left: 14px; right: -14px; bottom: -14px;
+      border: 1px solid var(--gold); opacity: .18; pointer-events: none;
+    }
+    .bio-portrait-wrap img,
+    .bio-portrait-placeholder {
+      width: 100%; aspect-ratio: 3/4; object-fit: cover;
+      border: 1.5px solid var(--olive); display: block;
+      box-shadow: var(--sh-lg);
+    }
+    .bio-portrait-placeholder {
+      background: var(--cream-dark);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px; color: var(--olive-lt);
+      background-image: url("images/bio_image.webp-compressed.webp");
+      background-size: cover; background-position: center;
+    }
+    .bio-portrait-placeholder i    { font-size: 2rem; opacity: .3; }
+    .bio-portrait-placeholder span { font-family: var(--f-accent); font-size: .72rem; letter-spacing: .1em; opacity: .45; }
+    .bio-handle-tag {
+      font-family: var(--f-accent); font-size: .68rem;
+      letter-spacing: .22em; color: var(--rust);
+      margin-top: 16px; text-align: center; opacity: .78; text-transform: uppercase;
+    }
+    .bio-text h3 {
+      font-family: var(--f-display); font-size: 2.4rem;
+      letter-spacing: .06em; color: var(--olive); margin-bottom: 6px; line-height: 1;
+    }
+    .bio-birthline {
+      font-family: var(--f-accent); font-size: .7rem;
+      letter-spacing: .2em; color: var(--rust); margin-bottom: 28px; opacity: .78;
+    }
+    .bio-text p { font-size: 1.05rem; color: var(--ink); margin-bottom: 18px; line-height: 1.85; }
+    .bio-text strong { font-weight: 600; color: var(--olive); }
+    .bio-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-top: 32px; padding: 12px 30px;
+      border: 1px solid var(--olive); background: transparent; color: var(--olive);
+      font-family: var(--f-accent); font-size: .7rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      transition: background var(--t) var(--ease), color var(--t), transform .4s var(--ease), box-shadow .4s var(--ease);
+    }
+    .bio-cta:hover {
+      background: var(--olive); color: var(--cream);
+      transform: translateY(-3px); box-shadow: var(--sh-md);
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       ARTWORKS GALLERY
+       Desktop: a 3-column CSS masonry grid with filter
+       buttons and a show-more/show-less reveal system.
+       Each item has a dark gradient overlay that appears
+       on hover, showing the artwork title and metadata.
+       Mobile (≤560px): the grid is hidden and replaced
+       by the horizontal carousel defined further below.
+    ═══════════════════════════════════════════════════ */
+    /* ── Desktop gallery grid (3-column CSS masonry) ── */
+    .gallery-grid { columns: 3; column-gap: 14px; }
+    .gallery-item {
+      break-inside: avoid; margin-bottom: 14px;
+      position: relative; overflow: hidden; cursor: none;
+      box-shadow: var(--sh-sm);
+      transition: transform .55s var(--ease), box-shadow .55s var(--ease);
+    }
+    .gallery-item:hover {
+      transform: translateY(-5px); z-index: 2;
+      box-shadow: var(--sh-lg), 0 0 40px rgba(184,150,46,.14);
+    }
+
+    .artwork-img { width: 100%; display: block; aspect-ratio: 4/5; }
+    .gallery-item:nth-child(3n+2) .artwork-img { aspect-ratio: 3/4; }
+    .gallery-item:nth-child(3n)   .artwork-img { aspect-ratio: 5/6; }
+    .artwork-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* Placeholder gradient swatches — used when no real image src is set on an artwork */
+    .artwork-img[data-c="gold"]  { background:linear-gradient(145deg,#c9a030,#7a5808,#3a2404); }
+    .artwork-img[data-c="rust"]  { background:linear-gradient(155deg,#9a2020,#5a0e0e,#1e0808); }
+    .artwork-img[data-c="navy"]  { background:linear-gradient(130deg,#3e6888,#1e3c58,#0c1e30); }
+    .artwork-img[data-c="night"] { background:linear-gradient(150deg,#2e2e2e,#141414,#080808); }
+    .artwork-img[data-c="fire"]  { background:linear-gradient(140deg,#d86020,#903010,#401408); }
+    .artwork-img[data-c="amber"] { background:linear-gradient(145deg,#e08828,#a05808,#502808); }
+    .artwork-img[data-c="sky"]   { background:linear-gradient(130deg,#5090c8,#284878,#0e1e38); }
+    .artwork-img[data-c="teal"]  { background:linear-gradient(145deg,#208898,#105060,#061e28); }
+    .artwork-img[data-c="ash"]   { background:linear-gradient(155deg,#383838,#181818,#060606); }
+    .artwork-img[data-c="indigo"]{ background:linear-gradient(145deg,#3030a0,#181860,#080830); }
+    .artwork-img[data-c="dusk"]  { background:linear-gradient(138deg,#183858,#0c2038,#060e18); }
+    .artwork-img[data-c="moss"]  { background:linear-gradient(148deg,#507030,#304018,#101808); }
+    .artwork-img[data-c="forest"]{ background:linear-gradient(135deg,#285850,#143028,#060e0c); }
+    .artwork-img { box-shadow: inset 0 0 50px rgba(0,0,0,.22); }
+
+    .artwork-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top,rgba(14,11,5,.96) 0%,rgba(20,17,8,.6) 45%,rgba(20,17,8,.08) 100%);
+      display: flex; flex-direction: column;
+      align-items: flex-start; justify-content: flex-end;
+      gap: 4px; padding: 20px; opacity: 0;
+      transition: opacity .45s var(--ease);
+    }
+    .gallery-item:hover .artwork-overlay { opacity: 1; }
+    .artwork-overlay i {
+      position: absolute; top: 14px; right: 14px;
+      font-size: .78rem; color: var(--gold); opacity: .8;
+    }
+    .artwork-overlay h3 {
+      font-family: var(--f-display); font-size: 1.1rem;
+      letter-spacing: .07em; color: var(--gold-lt); line-height: 1.15;
+    }
+    .artwork-overlay p {
+      font-family: var(--f-accent); font-size: .64rem;
+      color: rgba(240,234,216,.5); letter-spacing: .12em;
+    }
+    /* "learn more" prompt */
+    .artwork-overlay .overlay-learn {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 8px;
+      font-family: var(--f-accent); font-size: .6rem;
+      letter-spacing: .22em; text-transform: uppercase;
+      color: var(--gold); opacity: .9;
+      border-bottom: 1px solid rgba(184,150,46,.35);
+      padding-bottom: 1px;
+      transition: opacity .3s;
+    }
+    .artwork-overlay .overlay-learn i { font-size: .58rem; }
+
+    /* ── Desktop show-more / show-less reveal system ──
+       The wrapper clips the grid height. The fade veil sits
+       over the partial row so the cut-off isn't abrupt. ── */
+    #gallery-wrapper { position: relative; }
+
+    /* Gradient veil that softens the bottom edge of the clipped gallery */
+    #gallery-fade-veil {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      /* height controlled by JS */
+      pointer-events: none;
+      background: linear-gradient(to bottom,
+        rgba(229,220,200,0) 0%,
+        rgba(229,220,200,.55) 28%,
+        rgba(229,220,200,.92) 62%,
+        rgba(229,220,200,1) 100%);
+      transition: opacity .55s var(--ease);
+      z-index: 3;
+    }
+
+    /* Show More / Show Less button row — sits below the clipped grid */
+    .gallery-more-row {
+      display: flex; justify-content: center; align-items: center;
+      gap: 14px; margin-top: 10px;
+      position: relative; z-index: 4;
+    }
+    .gallery-more-btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 9px 28px;
+      border: 1px solid rgba(78,70,24,.38);
+      background: transparent;
+      font-family: var(--f-accent); font-size: .67rem;
+      letter-spacing: .18em; color: var(--olive); cursor: pointer;
+      text-transform: uppercase;
+      transition: background var(--t) var(--ease), color var(--t),
+                  border-color var(--t), box-shadow var(--t), transform .35s var(--ease);
+    }
+    .gallery-more-btn:hover {
+      background: var(--olive); color: var(--cream);
+      border-color: var(--olive); box-shadow: var(--sh-sm);
+      transform: translateY(-2px);
+    }
+    .gallery-more-btn i { font-size: .58rem; }
+    #btn-show-less { display: none; }
+
+    /* ── MOBILE CAROUSEL (≤560px) ──────────────────────────
+       Replaces the desktop grid on small screens. Each slide
+       is 60vw wide; inactive slides are scaled down and
+       dimmed so the active (centred) slide is clearly focal.
+       The overlay gradient is always visible here — no hover
+       needed on touch devices.
+    ─────────────────────────────────────────────────────── */
+
+    /* Carousel outer shell — hidden on desktop, shown on mobile via media query */
+    #gallery-carousel {
+      display: none; /* shown only on mobile via media query */
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      padding: 20px 0 32px;
+    }
+    .gc-track {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      will-change: transform;
+      transition: transform .7s cubic-bezier(.4,0,.2,1);
+    }
+    /* Each slide */
+    .gc-slide {
+      flex: 0 0 60vw;
+      position: relative;
+      cursor: pointer;
+      transform: scale(0.78);
+      opacity: 0.55;
+      transition: transform .7s cubic-bezier(.4,0,.2,1),
+                  opacity .7s cubic-bezier(.4,0,.2,1),
+                  box-shadow .7s cubic-bezier(.4,0,.2,1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .gc-slide.gc-active {
+      transform: scale(1);
+      opacity: 1;
+      box-shadow: 0 18px 56px rgba(30,27,17,.38), 0 4px 18px rgba(184,150,46,.18);
+      z-index: 2;
+    }
+    .gc-slide .artwork-img {
+      aspect-ratio: 4/5;
+      pointer-events: none;
+    }
+    /* Overlay gradient — always visible on mobile (touch devices don't hover) */
+    .gc-slide .artwork-overlay {
+      opacity: 1;
+      transition: opacity .4s var(--ease);
+    }
+    /* Side vignettes — softly fade out the non-active slides at the carousel edges */
+    #gallery-carousel::before,
+    #gallery-carousel::after {
+      content: ''; position: absolute; top: 0; bottom: 0;
+      width: 18vw; z-index: 3; pointer-events: none;
+    }
+    #gallery-carousel::before {
+      left: 0;
+      background: linear-gradient(to right, var(--cream-mid), transparent);
+    }
+    #gallery-carousel::after {
+      right: 0;
+      background: linear-gradient(to left, var(--cream-mid), transparent);
+    }
+
+    /* ═══════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════
+       EXHIBITIONS — TIMELINE
+       Vertical timeline with a fading gold line, dot
+       markers, and hover-left shift on each entry.
+    ═══════════════════════════════════════════════════ */
+    #exhibitions { position: relative; }
+    #exhibitions > * { position: relative; z-index: 1; }
+    .timeline { max-width: 680px; position: relative; padding-left: 30px;}
+    .timeline::before {
+      content: ''; position: absolute; top: 8px; left: 6px;
+      width: 1px; height: calc(100% - 8px);
+      background: linear-gradient(to bottom,var(--gold),transparent); opacity: .28;
+    }
+    .t-item { position: relative; margin-bottom: 40px; transition: padding-left var(--t) var(--ease); }
+    .t-item::before {
+      content: ''; position: absolute; left: -26px; top: 7px;
+      width: 7px; height: 7px; border-radius: 50%; background: var(--gold);
+      outline: 3px solid var(--cream);
+      box-shadow: 0 0 0 1px rgba(184,150,46,.4), 0 0 10px rgba(184,150,46,.2);
+    }
+    .t-item:hover { padding-left: 6px; }
+    .t-item:hover .t-event { color: var(--rust); }
+    /* Timeline item text — oversized intentionally for visual weight */
+    .t-year  { font-family: var(--f-accent); font-size: 1.32rem; letter-spacing: .24em; color: var(--rust); margin-bottom: 4px; text-transform: uppercase; font-weight: bolder; }
+    .t-event { font-family: var(--f-body); font-size: 2.12rem; font-weight: bolder; color: var(--olive); margin-bottom: 2px; transition: color var(--t); }
+    .t-venue { font-family: var(--f-body); font-size: 1.8rem; font-style: italic; color: var(--ink); opacity: .55; font-weight: bolder; }
+    .t-venue i { margin-right: 6px; font-size: .7rem; }
+
+    /* ═══════════════════════════════════════════════════
+       TESTIMONIALS
+       Horizontally scrolling card track with an infinite
+       auto-advance loop. Edge fade gradients mask the
+       overflow. Dot indicators are generated by JS.
+    ═══════════════════════════════════════════════════ */
+    #testimonials { overflow: hidden; }
+    .testi-outer { position: relative; margin: 0 -7vw; padding: 0 7vw; overflow: hidden; }
+    .testi-outer::before, .testi-outer::after {
+      content: ''; position: absolute; top: 0; bottom: 0; width: 100px; z-index: 2; pointer-events: none;
+    }
+    .testi-outer::before { left:  0; background: linear-gradient(to right,var(--cream-mid),transparent); }
+    .testi-outer::after  { right: 0; background: linear-gradient(to left, var(--cream-mid),transparent); }
+    #testi-track { display: flex; gap: 20px; padding: 6px 0 24px; will-change: transform; }
+    .testi-card {
+      flex: 0 0 min(420px,80vw);
+      background: var(--cream); border: 1px solid rgba(208,196,160,.6);
+      padding: 42px 34px 32px; position: relative;
+      box-shadow: var(--sh-md);
+      transition: transform .5s var(--ease), box-shadow .5s var(--ease);
+    }
+    .testi-card:hover { transform: translateY(-3px); box-shadow: var(--sh-lg); }
+    .testi-card::before {
+      content: '\201C'; font-family: 'Cormorant Garamond', serif;
+      font-size: 6.5rem; color: var(--gold); opacity: .13;
+      position: absolute; top: 0; left: 20px; line-height: 1; pointer-events: none;
+    }
+    .testi-text { font-family: var(--f-body); font-size: 1.04rem; font-style: italic; font-weight: 300; color: var(--ink); line-height: 1.86; margin-bottom: 24px; padding-top: 34px; }
+    .testi-author { font-family: var(--f-display); font-size: .9rem; letter-spacing: .1em; color: var(--olive); }
+    .testi-role   { font-family: var(--f-accent); font-size: .68rem; color: var(--rust); letter-spacing: .12em; margin-top: 2px; opacity: .8; }
+    .testi-dots { display: flex; justify-content: center; gap: 10px; margin-top: 36px; }
+    .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--cream-dark); border: none; cursor: pointer;
+      transition: background var(--t), transform var(--t);
+    }
+    .dot.active { background: var(--rust); transform: scale(1.55); }
+
+    /* ═══════════════════════════════════════════════════
+       CONTACT
+       Dark editorial section with a background photo
+       overlaid by a dark scrim. Two-column layout: left
+       holds the intro copy and contact info grid; right
+       holds the message form. Collapses to one column
+       on tablet and adjusts padding on mobile.
+    ═══════════════════════════════════════════════════ */
+    #contact {
+      background:
+        linear-gradient(rgba(18,15,10,0.8), rgba(18,15,10,0.8)),
+        url("images/contact-bg_2.jpeg-compressed.webp") center/cover no-repeat;
+        background-size: 100% 100%;
+      padding: 80px 7vw 0;
+      overflow: hidden;
+      position: relative;
+    }
+    /* The background image and overlay are applied via the section's CSS background shorthand above */
+    #contact > * { position: relative; z-index: 1; }
+
+    .contact-body { display: grid; grid-template-columns: 1fr 1.1fr; gap: 80px; align-items: start; padding-bottom: 90px; }
+
+    /* Left column — intro text, contact info grid, social links */
+    .contact-kicker::before {
+      content: ''; width: 28px; height: 1px;
+      background: var(--rust); flex-shrink: 0;
+    }
+    .contact-heading {
+      font-family: var(--f-display);
+      font-size: clamp(2.5rem, 5vw, 3.6rem);
+      font-weight: 400; color: var(--cream);
+      line-height: 1.05; margin-bottom: 22px;
+      letter-spacing: .06em;
+    }
+    .contact-desc {
+      font-family: var(--f-body); font-size: calc(.97rem * 1.25);
+      color: rgba(240,234,216,.72); line-height: 1.9;
+      font-weight: 300; max-width: 340px; margin-bottom: 44px;
+    }
+
+    /* 2-column icon info grid — address, phone, email, availability */
+    .contact-info-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 28px 24px; margin-bottom: 44px;
+    }
+    .ci-cell { display: flex; align-items: flex-start; gap: 14px; }
+    .ci-icon {
+      width: 44px; height: 44px; flex-shrink: 0;
+      border: 1px solid rgba(184,150,46,.22);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); font-size: .95rem;
+      transition: background var(--t), border-color var(--t);
+    }
+    .ci-cell:hover .ci-icon {
+      background: rgba(184,150,46,.09);
+      border-color: rgba(184,150,46,.5);
+    }
+    .ci-label {
+      font-family: var(--f-accent); font-size: calc(.56rem * 1.25);
+      letter-spacing: .28em; color: rgba(212,176,80,.75);
+      text-transform: uppercase; margin-bottom: 5px;
+    }
+    .ci-value {
+      font-family: var(--f-body); font-size: calc(.92rem * 1.25);
+      color: rgba(240,234,216,.88); line-height: 1.6;
+    }
+    .ci-value a { transition: color var(--t); }
+    .ci-value a:hover { color: var(--gold-lt); }
+
+    /* Follow Us */
+    .contact-follow-label {
+      font-family: var(--f-accent); font-size: calc(.6rem * 1.25);
+      letter-spacing: .32em; color: rgba(240,234,216,.65);
+      text-transform: uppercase; margin-bottom: 14px;
+    }
+    .contact-socials { display: flex; gap: 12px; }
+    .cs-btn {
+      width: 42px; height: 42px;
+      border: 1px solid rgba(184,150,46,.35);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(240,234,216,.7); font-size: .95rem;
+      transition: background var(--t), color var(--t), border-color var(--t);
+    }
+    .cs-btn:hover { background: rgba(184,150,46,.15); color: var(--gold-lt); border-color: rgba(184,150,46,.65); }
+
+    /* Right column — message form with underline-style inputs */
+    .form-eyebrow {
+      font-family: var(--f-display); font-weight: 400;
+      font-size: clamp(2rem, 3.5vw, 2.6rem);
+      letter-spacing: .06em;
+      color: var(--cream); margin-bottom: 8px;
+    }
+    .form-sub {
+      font-family: var(--f-body); font-size: calc(.9rem * 1.25);
+      color: rgba(240,234,216,.6); margin-bottom: 34px;
+    }
+    .contact-form { display: flex; flex-direction: column; gap: 18px; }
+    .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .f-group { display: flex; flex-direction: column; gap: 7px; }
+    .f-group label {
+      font-family: var(--f-accent); font-size: calc(.56rem * 1.25);
+      letter-spacing: .3em; color: rgba(240,234,216,.65);
+      text-transform: uppercase;
+    }
+    .f-group label span { color: var(--rust); margin-left: 2px; }
+    .f-group input, .f-group textarea {
+      background: #1e1b12;
+      border: none; border-bottom: 1px solid rgba(184,150,46,.28);
+      color: rgba(240,234,216,.9); font-family: var(--f-body); font-size: calc(.97rem * 1.25);
+      padding: 12px 14px; outline: none; resize: none; width: 100%;
+      transition: border-color var(--t), background var(--t);
+    }
+    .f-group input::placeholder, .f-group textarea::placeholder { color: rgba(240,234,216,.3); font-family: var(--f-body); }
+    .f-group input:focus, .f-group textarea:focus {
+      border-bottom-color: rgba(184,150,46,.55);
+      background: #222014;
+    }
+    .f-submit {
+      align-self: flex-start; display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 36px;
+      background: var(--gold);
+      color: #111;
+      border: none;
+      font-family: var(--f-accent); font-size: calc(.68rem * 1.25); letter-spacing: .22em; text-transform: uppercase;
+      font-weight: 700; cursor: pointer;
+      transition: background var(--t) var(--ease), transform .4s var(--ease), box-shadow .4s var(--ease);
+    }
+    .f-submit:hover {
+      background: var(--gold-lt);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(184,150,46,.3);
+    }
+    #form-msg { display: none; font-family: var(--f-accent); font-size: calc(.7rem * 1.25); letter-spacing: .06em; margin-top: 6px; }
+
+    
+
+    /* Responsive contact */
+    @media (max-width: 900px) {
+      #contact {
+        background-size: 600% 100%;
+      }
+      .contact-body { grid-template-columns: 1fr; gap: 52px; }
+      .contact-info-grid { grid-template-columns: 1fr 1fr; }
+      #contact-hero { height: 220px; }
+      #contact-cta { height: 280px; }
+    }
+    @media (max-width: 560px) {
+      .contact-info-grid { grid-template-columns: 1fr; }
+      .f-row { grid-template-columns: 1fr; }
+      #contact { padding: 60px 5vw 0; }
+      .cta-heading { font-size: clamp(1.8rem, 8vw, 2.6rem); }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       FOOTER
+       Minimal dark strip with logo, copyright, and tagline.
+       Stacks vertically and centres on small screens.
+    ═══════════════════════════════════════════════════ */
+    footer {
+      background: #100f0a; color: rgba(240,234,216,.3);
+      padding: 36px 7vw; display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 12px;
+      border-top: 1px solid rgba(184,150,46,.07);
+    }
+    .footer-logo { font-family: var(--f-display); font-size: 1.1rem; letter-spacing: .15em; color: var(--gold); opacity: .5; transition: opacity var(--t); }
+    .footer-logo:hover { opacity: .8; }
+    footer p { font-family: var(--f-accent); font-size: .64rem; letter-spacing: .1em; }
+
+    /* ═══════════════════════════════════════════════════
+       LIGHTBOX
+       Full-screen overlay with a two-panel layout:
+       left = image, right = title + metadata details.
+       Matches the reference layout style while keeping
+       the site's gold/cream/olive colour scheme.
+       Closes via ✕ button, backdrop click, or Escape.
+    ═══════════════════════════════════════════════════ */
+    #lightbox {
+      position: fixed; inset: 0;
+      background: rgba(10,8,4,.97);
+      z-index: 8000;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0;
+      visibility: hidden; opacity: 0;
+      transition: opacity .4s var(--ease), visibility 0s linear .4s;
+    }
+    #lightbox.open {
+      visibility: visible; opacity: 1;
+      transition: opacity .4s var(--ease), visibility 0s;
+    }
+
+    /* ✕ close button — top-right of the overlay */
+    #lb-close {
+      position: absolute; top: 20px; right: 24px;
+      background: none; border: 1px solid rgba(184,150,46,.25);
+      color: rgba(240,234,216,.5); font-size: 1rem;
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: color var(--t), border-color var(--t), transform var(--t);
+      z-index: 2;
+    }
+    #lb-close:hover { color: var(--cream); border-color: var(--gold); transform: rotate(90deg); }
+
+    /* Two-panel wrapper */
+    .lb-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 100%; height: 100vh;
+      max-width: 1200px;
+    }
+
+    /* Left panel — image */
+    .lb-image-panel {
+      background: #0d0b06;
+      display: flex; align-items: center; justify-content: center;
+      padding: 60px 40px;
+      border-right: 1px solid rgba(184,150,46,.1);
+      overflow: hidden;
+    }
+    .lb-image-panel img {
+      max-width: 100%; max-height: 80vh;
+      object-fit: contain; display: block;
+      box-shadow: 0 20px 80px rgba(0,0,0,.6);
+    }
+
+    /* Right panel — details */
+    .lb-detail-panel {
+      background: #131108;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 70px 52px;
+      position: relative;
+    }
+
+    /* Back button (top-left of detail panel) */
+    .lb-back {
+      position: absolute; top: 24px; left: 52px;
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--f-accent); font-size: .65rem;
+      letter-spacing: .22em; text-transform: uppercase;
+      color: rgba(240,234,216,.45);
+      background: none; border: 1px solid rgba(184,150,46,.18);
+      padding: 7px 16px; cursor: pointer;
+      transition: color var(--t), border-color var(--t);
+    }
+    .lb-back:hover { color: var(--cream); border-color: rgba(184,150,46,.5); }
+    .lb-back i { font-size: .6rem; }
+
+    /* Title */
+    #lb-title {
+      font-family: var(--f-display);
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      letter-spacing: .08em; line-height: 1.05;
+      color: var(--cream);
+      margin-bottom: 18px;
+    }
+
+    /* Gold rule under title */
+    .lb-rule {
+      width: 48px; height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent);
+      margin-bottom: 36px;
+    }
+
+    /* Meta table — Medium / Year / Category rows */
+    .lb-meta-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0;
+      border-top: 1px solid rgba(184,150,46,.12);
+    }
+    .lb-meta-grid dt,
+    .lb-meta-grid dd {
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(184,150,46,.08);
+      font-family: var(--f-body);
+      line-height: 1.5;
+    }
+    .lb-meta-grid dt {
+      font-family: var(--f-accent);
+      font-size: .65rem; letter-spacing: .28em;
+      text-transform: uppercase;
+      color: var(--gold); opacity: .8;
+      padding-right: 40px;
+      min-width: 110px;
+    }
+    .lb-meta-grid dd {
+      font-size: 1rem;
+      color: rgba(240,234,216,.75);
+      font-weight: 300;
+    }
+
+    /* Mobile: stack panels vertically */
+    @media (max-width: 700px) {
+      .lb-content {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        height: 100vh;
+        overflow-y: auto;
+      }
+      .lb-image-panel {
+        padding: 50px 24px 28px;
+        border-right: none;
+        border-bottom: 1px solid rgba(184,150,46,.1);
+      }
+      .lb-image-panel img { max-height: 42vh; }
+      .lb-detail-panel { padding: 40px 24px 40px; justify-content: flex-start; }
+      .lb-back { left: 24px; top: 14px; }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       BACK TO TOP
+       Fixed bottom-right button that fades in (.show) once
+       the user has scrolled 500px down the page.
+    ═══════════════════════════════════════════════════ */
+    #back-top {
+      position: fixed; bottom: 28px; right: 28px;
+      width: 40px; height: 40px; background: var(--olive); color: var(--cream);
+      border: none; display: flex; align-items: center; justify-content: center;
+      font-size: .8rem; cursor: pointer; z-index: 400;
+      opacity: 0; pointer-events: none; transform: translateY(12px);
+      transition: opacity .4s var(--ease), transform .4s var(--ease), background var(--t), box-shadow var(--t);
+    }
+    #back-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    #back-top:hover { background: var(--rust); box-shadow: 0 6px 20px rgba(158,46,18,.3); }
+
+    /* ═══════════════════════════════════════════════════
+       RESPONSIVE OVERRIDES
+       ≤900px (tablet): hide desktop nav links, show
+         hamburger, collapse bio and contact to 1 column.
+       ≤560px (mobile): reduce section padding, stack
+         footer, switch gallery from grid to carousel,
+         and adjust hero for small viewports.
+    ═══════════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .nav-links  { display: none; }
+      #nav-toggle { display: block; }
+      .bio-grid          { grid-template-columns: 1fr; gap: 50px; }
+      .bio-portrait-wrap { max-width: 260px; margin: 0 auto; }
+      .gallery-grid      { columns: 2; }
+      #gallery-wrapper   { display: block; }
+      #gallery-carousel  { display: none; }
+      .contact-body      { grid-template-columns: 1fr; gap: 52px; }
+
+    }
+    @media (max-width: 560px) {
+      .section       { padding: 70px 10vw; }
+      footer         { flex-direction: column; text-align: center; }
+      .testi-card    { flex: 0 0 88vw; }
+      .testi-outer::before, .testi-outer::after { width: 24px; }
+      #hero  {padding: calc(var(--nav-h) + 5%) 7vw 5%;}
+      .hero-name { font-size: clamp(3.4rem,17vw,4.8rem); }
+      #hero::after { width: 100%; clip-path: none; opacity: 0.6; background-color: #FFF; }
+      .bio-portrait-placeholder {scale: 1.5;}
+      .timeline * { font-size: 100%;}
+      #contact{
+        background-size: 300% 100%;
+        background-position: left;
+      }
+      /* Gallery: hide desktop grid, show carousel */
+      #gallery-wrapper   { display: none !important; }
+      .gallery-more-row  { display: none !important; }
+      #gallery-carousel  { display: block !important; }
+    }
+    /* ═══════════════════════════════════════════════════
+       MOBILE FULL GALLERY OVERLAY
+       Cream-background overlay showing all 12 artworks,
+       one per row, each with gradient overlay visible.
+       Only shown on ≤560px. Closable via X button.
+    ═══════════════════════════════════════════════════ */
+    #see-gallery-btn {
+      display: none; /* shown only on mobile */
+      margin: 18px auto 0;
+      padding: 12px 32px;
+      background: transparent;
+      border: 1px solid var(--olive);
+      color: var(--olive);
+      font-family: var(--f-accent);
+      font-size: .72rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      align-items: center;
+      gap: 9px;
+      transition: background var(--t) var(--ease), color var(--t), transform .35s var(--ease), box-shadow .35s var(--ease);
+    }
+    #see-gallery-btn:hover {
+      background: var(--olive); color: var(--cream);
+      transform: translateY(-2px); box-shadow: var(--sh-sm);
+    }
+    @media (max-width: 560px) {
+      #see-gallery-btn { display: inline-flex; }
+    }
+
+    /* Full gallery overlay */
+    #full-gallery-overlay {
+      position: fixed; inset: 0;
+      background: var(--cream);
+      z-index: 7000;
+      visibility: hidden; opacity: 0;
+      transition: opacity .45s var(--ease), visibility 0s linear .45s;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #full-gallery-overlay.open {
+      visibility: visible; opacity: 1;
+      transition: opacity .45s var(--ease), visibility 0s;
+    }
+
+    /* Header row with title + close */
+    .fgo-header {
+      position: sticky; top: 0;
+      background: var(--cream);
+      z-index: 2;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 6vw 14px;
+      border-bottom: 1px solid rgba(78,70,24,.12);
+      box-shadow: 0 2px 16px rgba(30,27,17,.07);
+    }
+    .fgo-title {
+      font-family: var(--f-display); font-size: 1.55rem;
+      letter-spacing: .09em; color: var(--olive);
+    }
+    #fgo-close {
+      width: 44px; height: 44px;
+      background: var(--olive);
+      border: none; color: var(--cream);
+      font-size: 1.2rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background var(--t) var(--ease), transform var(--t);
+      flex-shrink: 0;
+    }
+    #fgo-close:hover { background: var(--rust); transform: rotate(90deg); }
+
+    /* Grid — 1 artwork per row */
+    .fgo-grid {
+      display: flex; flex-direction: column;
+      gap: 0;
+      padding: 0 0 40px;
+    }
+    .fgo-item {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .fgo-item .artwork-img {
+      aspect-ratio: 4/5;
+      width: 100%;
+    }
+    .fgo-item .artwork-img img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: transform .55s var(--ease);
+    }
+    .fgo-item:active .artwork-img img { transform: scale(1.03); }
+    /* Overlay always visible in full gallery */
+    .fgo-item .artwork-overlay {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PAINTBRUSH CURSOR -->
+  <div id="brush-cursor">
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="12" y="0" width="4" height="15" rx="1.5" fill="#4e4618" opacity=".92"/>
+      <rect x="11" y="13" width="6" height="3.5" rx=".5" fill="#b8962e" opacity=".95"/>
+      <path d="M11 16.5 Q9 20 10 24 Q14 27.5 18 24 Q19 20 17 16.5 Z" fill="#9e2e12" opacity=".9"/>
+      <ellipse cx="14" cy="24" rx="2.2" ry="1.3" fill="#d4b050" opacity=".35"/>
+    </svg>
+  </div>
+  <canvas id="brush-canvas"></canvas>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="#hero" class="nav-logo">EO<em>.</em></a>
+    <ul class="nav-links">
+      <li><a href="#statement">Statement</a></li>
+      <li><a href="#bio">Bio</a></li>
+      <li><a href="#artworks">Works</a></li>
+      <li><a href="#exhibitions">Exhibitions</a></li>
+      <li><a href="#testimonials">Testimonials</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button id="nav-toggle" aria-label="Open menu" aria-expanded="false">
+      <i class="fa-solid fa-bars nav-icon-bars"></i>
+    </button>
+  </nav>
+
+  <div id="nav-drawer" role="dialog" aria-label="Navigation">
+    <button id="drawer-close" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+    <a href="#statement"    class="dl">Statement</a>
+    <a href="#bio"          class="dl">Bio</a>
+    <a href="#artworks"     class="dl">Works</a>
+    <a href="#exhibitions"  class="dl">Exhibitions</a>
+    <a href="#testimonials" class="dl">Testimonials</a>
+    <a href="#contact"      class="dl">Contact</a>
+  </div>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div id="hero-slides">
+      <img class="hero-slide active" src="images/sonder.webp-compressed.webp" alt="hero_img_1" />
+      <img class="hero-slide" src="images/falling_piece.jpeg-compressed.webp" alt="hero_img_2" />
+      <img class="hero-slide" src="images/heavn_lost_a_wing.jpeg-compressed.webp" alt="hero_img_3" />
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Artist &nbsp;&bull;&nbsp; Storyteller &nbsp;&bull;&nbsp; Benin City</p>
+      <h1 class="hero-name">Epiphany Oarhe</h1>
+      <p class="hero-handle">@THE24THDAYY</p>
+      <p class="hero-tagline">
+        Between where I'm from<br>and where I believe I'm going.<br>
+        Between Life and a Canvas.
+      </p>
+      <div class="hero-socials">
+        <a href="https://www.instagram.com/the24thdayy?igsh=djVoeml1ZXZsaHo3" target="_blank" rel="noopener" class="hero-social-link" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://x.com/the24thdayy" target="_blank" rel="noopener" class="hero-social-link" aria-label="X / Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://pin.it/4VQvZR44M" target="_blank" rel="noopener" class="hero-social-link" aria-label="Pinterest"><i class="fa-brands fa-pinterest"></i></a>
+        <a href="https://www.inprnt.com/gallery/the24thdayy/" target="_blank" rel="noopener" class="hero-social-link" aria-label="INPRNT">
+          <svg class="inprnt-logo" fill="#7a6e28" viewBox="1.321 -.718 575.999 236.878" width="2500" xmlns="http://www.w3.org/2000/svg">
+            <path d="m207 236.16h-192c-.177-.076-.347-.187-.532-.222-7.828-1.508-13.147-7.916-13.147-15.848v-204.813c0-8.934 7.047-15.995 15.965-15.995h187.296c8.911 0 15.974 7.058 15.975 16.001.005 68.311.004 136.622 0 204.933 0 7.005-4.411 13.041-11.078 15.209-.82.265-1.652.491-2.479.735zm-57.552-164.846 1.188 51.708c-.339-.16-.443-.329-.537-.504-9.018-16.735-18.041-33.467-27.033-50.216-.417-.778-.86-1.049-1.74-1.045-7.599.038-15.199.021-22.798.024-.387 0-.774.032-1.175.05v100.129h26.076l-1.193-51.642c.431.301.624.638.808.98 8.904 16.524 17.813 33.045 26.691 49.583.474.884.983 1.215 2.017 1.208 7.439-.055 14.878-.029 22.318-.029h1.432v-100.247zm-97.046.008v100.167h25.974v-100.167zm524.918-45.882h-20.549v207.17h-24.111v-207.089h-21.616v-25.239h1.61c21.036 0 42.073 0 63.109-.002.519 0 1.038-.026 1.557-.04zm-154.97-25.099h24.42c.391 1.997.795 4.02 1.181 6.047 4.056 21.264 8.113 42.528 12.162 63.794 3.034 15.932 6.179 31.845 9.04 47.809 1.797 10.025 3.161 20.127 4.722 30.194.073.469.173.933.42 1.389v-149.202h21.275v232.246c-.412.019-.873.058-1.334.059-5.48.004-10.961-.044-16.439.039-1.21.018-1.527-.433-1.766-1.484-4.078-17.952-8.191-35.896-12.302-53.84-4.718-20.591-9.558-41.156-14.107-61.784-1.839-8.34-3.046-16.819-4.541-25.235-.412-2.316-.827-4.63-1.404-6.938v149.172h-21.327zm-91.414-.06h1.269c11.519 0 23.039-.093 34.557.031 8.525.091 16.141 2.653 21.949 9.262 4.249 4.834 6.443 10.642 7.361 16.908.531 3.625.834 7.316.85 10.978.082 18.678.043 37.357.034 56.036-.002 4.259-.463 8.458-1.88 12.505-2.027 5.786-5.653 10.327-10.744 13.717-.232.154-.46.314-.687.474-.031.022-.047.064-.057.078 1.666 1.331 3.406 2.579 4.982 4.006 5.177 4.688 7.934 10.63 8.74 17.506.204 1.742.275 3.508.277 5.263.019 18.719-.022 37.437.031 56.156.017 6.035.273 12.069 1.866 17.951.24.886.5 1.77.807 2.634 1.167 3.284 1.455 5.722 1.044 9.533h-1.246c-4.68 0-9.36-.048-14.039.02-2.391.035-4.259-.905-5.795-2.626-2.641-2.959-3.822-6.611-4.739-10.353-1.186-4.835-1.658-9.77-1.664-14.737-.026-20.678-.013-41.357-.008-62.035.001-2.676-.381-5.265-1.718-7.63-1.652-2.923-4.134-4.461-7.537-4.442-2.993.016-5.985.003-9.1.003v101.054h-24.553zm24.599 24.931v82.5c3.327 0 6.565.118 9.79-.035 2.883-.137 4.895-1.769 6.098-4.376 1.025-2.221 1.365-4.597 1.367-7.005.02-20.273.046-40.546-.039-60.819-.009-2.11-.523-4.279-1.158-6.31-.704-2.252-2.45-3.786-4.845-3.906-3.701-.185-7.418-.049-11.213-.049zm-84.931 207.389h-24.146v-232.256c.415-.021.833-.061 1.252-.061 11.399-.003 22.798-.101 34.196.029 8.786.1 16.593 2.786 22.512 9.665 3.83 4.451 5.99 9.725 6.938 15.442.599 3.611.984 7.3 1 10.957.091 21.437.068 42.875.031 64.312-.011 6.37-1 12.592-3.653 18.44-4.353 9.593-11.958 14.93-22.285 16.159-4.701.559-9.497.314-14.25.431-.478.012-.956.002-1.593.002-.002 32.316-.002 64.56-.002 96.88zm-.009-120.054c3.911 0 7.705.106 11.488-.042 2.09-.082 3.609-1.376 4.627-3.206 1.285-2.311 1.593-4.854 1.596-7.419.026-22.032.049-44.064-.037-66.096-.009-2.229-.492-4.54-1.206-6.661-.902-2.679-3.064-3.978-5.945-3.968-3.159.012-6.318 0-9.477.006-.342.001-.684.049-1.046.077z"/>
+          </svg>
+        </a>
+      </div>
+      <div class="hero-btns">
+        <a href="#artworks" class="hero-cta">
+          <i class="fa-solid fa-arrow-down"></i> View Works
+        </a>
+        <a href="#contact" class="hero-cta hero-cta-outline">
+          <i class="fa-regular fa-envelope"></i> Get in Touch
+        </a>
+      </div>
+    </div>
+    <div class="scroll-hint">SCROLL</div>
+  </section>
+
+  <!-- STATEMENT -->
+  <section id="statement" class="section section-dark">
+    <div class="statement-inner">
+      <span class="section-label reveal">Artist Statement</span>
+      <h2 class="section-title reveal">Statement</h2>
+      <div class="rule reveal"></div>
+      <p class="statement-pull reveal">"Between where I'm from and where I believe I'm going. Between Life and a Canvas."</p>
+      <p class="reveal">My work reflects a personal journey and the wider experience of a generation navigating disorder, imperfection, and the search for balance — using layered texture, symbolism, and distortion to create emotionally charged images that explore identity, memory, and transformation.</p>
+      <p class="reveal">I approach the canvas as a space where things overlap, collide, and conflict, mirroring how life actually feels most times. Chaotic. Rawness is not something I correct — it is a tool I lean into, allowing the work to stay unresolved, honest, and human.</p>
+      <p class="reveal">Each piece functions as both journal entry and visual experiment. My art is a journal, and I don't aim to explain everything. <em>I want you to feel first, then question.</em></p>
+    </div>
+  </section>
+
+  <!-- BIO -->
+  <section id="bio" class="section">
+    <span class="section-label reveal">About the Artist</span>
+    <h2 class="section-title reveal">Bio</h2>
+    <div class="rule reveal"></div>
+    <div class="bio-grid stagger">
+      <div class="bio-portrait-wrap reveal">
+        <div class="bio-portrait-placeholder">
+          <i class="fa-regular fa-image"></i>
+          <span>[ Portrait Photo ]</span>
+        </div>
+        <p class="bio-handle-tag"><i class="fa-solid fa-at"></i> THE24THDAYY</p>
+      </div>
+      <div class="bio-text reveal">
+        <h3>Epiphany Oarhe</h3>
+        <p class="bio-birthline">b. 2001 &nbsp;&bull;&nbsp; Benin City, Nigeria</p>
+        <p>Epiphany Oarhe — also known as <strong>The24thdayy</strong> — is a self-taught multidisciplinary artist whose practice explores identity, memory, history, and transformation through expressive figuration, layered textures, and symbols drawn from Nigerian culture and mythology.</p>
+        <p>Working primarily in digital painting, he approaches the canvas as a space where forms, colours, and emotions overlap and conflict. His process is intentionally free-flowing — merging realism, surrealism, and stylized figuration while building depth through texture, hand-drawn marks, and gestural strokes.</p>
+        <p>His work has been exhibited at galleries and festivals across Nigeria.</p>
+        <p>He is currently seeking international residencies, collaborations, and exhibition opportunities to expand his creative practice.</p>
+        <a href="#contact" class="bio-cta">
+          <i class="fa-regular fa-envelope"></i> Get in Touch
+        </a>
+      </div>
+    </div>
+  </section>
+
+    <!-- ARTWORKS -->
+  <section id="artworks" class="section section-mid">
+    <span class="section-label reveal">Selected Works</span>
+    <h2 class="section-title reveal">Artworks</h2>
+    <div class="rule reveal"></div>
+
+    <!-- ── DESKTOP grid (hidden on mobile via CSS) ── -->
+    <div id="gallery-wrapper">
+      <div class="gallery-grid" id="gallery-grid">
+        <div class="gallery-item" data-year="2025" data-title="Benin Royal Stool: Her Unbroken Spirit" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/benin_royal_stool.jpeg-compressed.webp" alt="Benin Royal Stool: Her Unbroken Spirit" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Benin Royal Stool: Her Unbroken Spirit</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gallery-item" data-year="2026" data-title="The ERUL" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/the_erul.jpeg-compressed.webp" alt="The ERUL" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>The ERUL</h3><p>Digital Painting &bull; 2026</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gallery-item" data-year="2024" data-title="ZARA" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/zara.jpeg-compressed.webp" alt="ZARA" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>ZARA</h3><p>Digital Painting &bull; 2024</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gallery-item" data-year="2025" data-title="Heaven's Gift, Foreign Greed" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/heavens_gift_foreign_greed.jpeg-compressed.webp" alt="Heaven's Gift, Foreign Greed" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Heaven's Gift, Foreign Greed</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gallery-item" data-year="2025" data-title="Scramble For Africa" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/scrambl_for_africa.jpeg-compressed.webp" alt="Scramble For Africa" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Scramble For Africa</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gallery-item" data-year="2025" data-title="Unfazed" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/unfazed.jpeg-compressed.webp" alt="Unfazed" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Unfazed</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gallery-item" data-year="2026" data-title="Heaven Lost A Wing" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/heavn_lost_a_wing.jpeg-compressed.webp" alt="Heaven Lost A Wing" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Heaven Lost A Wing</h3><p>Digital Painting &bull; 2026</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gallery-item" data-year="2025" data-title="Embracing The Inner Child" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/embracing_the_inner_child.jpeg-compressed.webp" alt="Embracing The Inner Child" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Embracing The Inner Child</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gallery-item" data-year="2025" data-title="Echoes in Silence" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/echoes_in_silnce.jpeg-compressed.webp" alt="Echoes in Silence" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Echoes in Silence</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gallery-item" data-year="2025" data-title="Falling Piece" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/falling_piece.jpeg-compressed.webp" alt="Falling Piece" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Falling Piece</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gallery-item" data-year="2025" data-title="Sonder" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/sonder.webp-compressed.webp" alt="Sonder" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Sonder</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gallery-item" data-year="2025" data-title="Frames" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/frames.jpeg-compressed.webp" alt="Frames" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Frames</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+      </div>
+      <!-- fade veil over the partially-visible second row -->
+      <div id="gallery-fade-veil"></div>
+    </div>
+
+    <!-- Show more / less buttons (desktop) -->
+    <div class="gallery-more-row">
+      <button class="gallery-more-btn" id="btn-show-more">
+        <i class="fa-solid fa-chevron-down"></i> Show More
+      </button>
+      <button class="gallery-more-btn" id="btn-show-less">
+        <i class="fa-solid fa-chevron-up"></i> Show Less
+      </button>
+    </div>
+
+    <!-- ── MOBILE carousel (shown on ≤ 560px via CSS) ── -->
+    <div id="gallery-carousel" aria-label="Artworks carousel">
+      <div class="gc-track" id="gc-track">
+        <div class="gc-slide" data-year="2025" data-title="Benin Royal Stool: Her Unbroken Spirit" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/benin_royal_stool.jpeg-compressed.webp" alt="Benin Royal Stool: Her Unbroken Spirit" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Benin Royal Stool: Her Unbroken Spirit</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gc-slide" data-year="2026" data-title="The ERUL" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/the_erul.jpeg-compressed.webp" alt="The ERUL" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>The ERUL</h3><p>Digital Painting &bull; 2026</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gc-slide" data-year="2024" data-title="ZARA" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/zara.jpeg-compressed.webp" alt="ZARA" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>ZARA</h3><p>Digital Painting &bull; 2024</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gc-slide" data-year="2025" data-title="Heaven's Gift, Foreign Greed" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/heavens_gift_foreign_greed.jpeg-compressed.webp" alt="Heaven's Gift, Foreign Greed" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Heaven's Gift, Foreign Greed</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gc-slide" data-year="2025" data-title="Scramble For Africa" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/scrambl_for_africa.jpeg-compressed.webp" alt="Scramble For Africa" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Scramble For Africa</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gc-slide" data-year="2025" data-title="Unfazed" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/unfazed.jpeg-compressed.webp" alt="Unfazed" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Unfazed</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gc-slide" data-year="2026" data-title="Heaven Lost A Wing" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/heavn_lost_a_wing.jpeg-compressed.webp" alt="Heaven Lost A Wing" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Heaven Lost A Wing</h3><p>Digital Painting &bull; 2026</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gc-slide" data-year="2025" data-title="Embracing The Inner Child" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/embracing_the_inner_child.jpeg-compressed.webp" alt="Embracing The Inner Child" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Embracing The Inner Child</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gc-slide" data-year="2025" data-title="Echoes in Silence" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/echoes_in_silnce.jpeg-compressed.webp" alt="Echoes in Silence" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Echoes in Silence</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gc-slide" data-year="2025" data-title="Falling Piece" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/falling_piece.jpeg-compressed.webp" alt="Falling Piece" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Falling Piece</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gc-slide" data-year="2025" data-title="Sonder" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/sonder.webp-compressed.webp" alt="Sonder" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Sonder</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+        <div class="gc-slide" data-year="2025" data-title="Frames" data-medium="Digital Painting">
+          <div class="artwork-img"><img src="images/frames.jpeg-compressed.webp" alt="Frames" loading="lazy"/></div>
+          <div class="artwork-overlay"><i class="fa-solid fa-expand"></i><h3>Frames</h3><p>Digital Painting &bull; 2025</p><span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span></div>
+        </div>
+      </div>
+    </div>
+    <!-- See Full Gallery button — mobile only -->
+    <div style="display:flex;justify-content:center;">
+      <button id="see-gallery-btn" aria-label="See full gallery">
+        <i class="fa-solid fa-table-cells-large"></i> See Full Gallery
+      </button>
+    </div>
+  </section>
+
+  <!-- FULL GALLERY OVERLAY (mobile) -->
+  <div id="full-gallery-overlay" role="dialog" aria-modal="true" aria-label="Full artwork gallery">
+    <div class="fgo-header">
+      <span class="fgo-title">All Works</span>
+      <button id="fgo-close" aria-label="Close gallery"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="fgo-grid" id="fgo-grid">
+      <!-- populated by JS from gc-slides data -->
+    </div>
+  </div>
+  <section id="exhibitions" class="section">
+    <span class="section-label reveal">CV / Exhibition History</span>
+    <h2 class="section-title reveal">Exhibitions</h2>
+    <div class="rule reveal"></div>
+    <div class="timeline reveal">
+      <div class="t-item"><p class="t-year">2025</p><p class="t-event">The Benin Renaissance Residency &amp; Exhibition</p><p class="t-venue"><i class="fa-solid fa-location-dot"></i>Benin National Museum, Benin City, Nigeria</p></div>
+      <div class="t-item"><p class="t-year">2025</p><p class="t-event">Fobally Lagos Easter Art Festival</p><p class="t-venue"><i class="fa-solid fa-location-dot"></i>JK Randle Centre for Yoruba Culture &amp; History, Lagos</p></div>
+      <div class="t-item"><p class="t-year">2025</p><p class="t-event">The Benin Art Fair</p><p class="t-venue"><i class="fa-solid fa-location-dot"></i>Thought Pyramid Gallery, Benin City, Nigeria</p></div>
+      <div class="t-item"><p class="t-year">2025</p><p class="t-event">Benin Arts and Books Festival</p><p class="t-venue"><i class="fa-solid fa-location-dot"></i>EDO Innovation Hub, Benin City, Nigeria</p></div>
+      <div class="t-item"><p class="t-year">2020 – 2024</p><p class="t-event">Colorist &amp; Editor — Blankpage Comics</p><p class="t-venue"><i class="fa-solid fa-pen-nib"></i>Visual development for narrative comic projects</p></div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials" class="section section-mid">
+    <span class="section-label reveal">What People Say</span>
+    <h2 class="section-title reveal">Testimonials</h2>
+    <div class="rule reveal"></div>
+    <div class="testi-outer">
+      <div id="testi-track">
+        <div class="testi-card"><p class="testi-text">Epiphany's work stopped me in the middle of the gallery. There's a weight to it — an emotional honesty you rarely see in someone this young. His use of symbolism rooted in Edo culture feels both ancient and urgent.</p><p class="testi-author">Curator, Thought Pyramid Gallery</p><p class="testi-role">Benin Art Fair, 2025</p></div>
+        <div class="testi-card"><p class="testi-text">Working with Epiphany on Blankpage Comics was a privilege. His eye for colour and narrative pacing transformed our pages. He doesn't just colour — he tells a second story within the story.</p><p class="testi-author">Creative Director, Blankpage Comics</p><p class="testi-role">2022</p></div>
+        <div class="testi-card"><p class="testi-text">"Scramble For Africa" is one of the most politically charged and visually striking pieces I've seen at any Nigerian art festival this decade. Oarhe speaks in images the way poets speak in stanzas.</p><p class="testi-author">Arts Journalist</p><p class="testi-role">Fobally Lagos Easter Art Festival, 2025</p></div>
+        <div class="testi-card"><p class="testi-text">His self-taught discipline is staggering. Epiphany has developed a visual language wholly his own — expressive, culturally grounded, and deeply personal. He is one of the voices to watch in African contemporary digital art.</p><p class="testi-author">Gallery Director</p><p class="testi-role">Benin Renaissance Residency, 2025</p></div>
+        <div class="testi-card"><p class="testi-text">What sets Epiphany apart is his refusal to resolve tension on the canvas. He lets chaos breathe, and in that space between order and disorder, something profoundly human emerges every time.</p><p class="testi-author">Fellow Artist</p><p class="testi-role">EDO Innovation Hub, 2025</p></div>
+      </div>
+    </div>
+    <div id="testi-dots" class="testi-dots"></div>
+  </section>
+
+  <!-- CONTACT BODY -->
+  <section id="contact">
+    <div class="contact-body">
+
+      <!-- Left: info -->
+      <div class="contact-left reveal">
+        <h3 class="contact-heading">Get In Touch</h3>
+        <p class="contact-desc">Art is a dialogue, and I'd love to hear your thoughts on my work. If you're interested in an original piece, a print, or just want to say hello, please feel free to drop a message. I look forward to connecting with you.</p>
+
+        <div class="contact-info-grid">
+          <div class="ci-cell">
+            <div class="ci-icon"><i class="fa-regular fa-map"></i></div>
+            <div class="ci-text">
+              <p class="ci-label">Address</p>
+              <p class="ci-value">Epiphany Oarhe<br>Benin City, Nigeria</p>
+            </div>
+          </div>
+          <div class="ci-cell">
+            <div class="ci-icon"><i class="fa-solid fa-phone"></i></div>
+            <div class="ci-text">
+              <p class="ci-label">Phone</p>
+              <p class="ci-value"><a href="tel:+2348140350383">+234 814 035 0383</a><br><a href="tel:+2348140350383">+234 814 035 0383</a></p>
+            </div>
+          </div>
+          <div class="ci-cell">
+            <div class="ci-icon"><i class="fa-regular fa-envelope"></i></div>
+            <div class="ci-text">
+              <p class="ci-label">Email</p>
+              <p class="ci-value"><a href="mailto:epiphanyoarhe13@gmail.com">epiphanyoarhe13@gmail.com</a><br><a href="https://linktr.ee/the24thdayy" target="_blank">linktr.ee/the24thdayy</a></p>
+            </div>
+          </div>
+          <div class="ci-cell">
+            <div class="ci-icon"><i class="fa-regular fa-clock"></i></div>
+            <div class="ci-text">
+              <p class="ci-label">Availability</p>
+              <p class="ci-value">Open for collaborations<br>Mon – Sat</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="contact-follow-label">Follow Me</p>
+        <div class="contact-socials">
+          <a class="cs-btn" href="https://www.instagram.com/the24thdayy?igsh=djVoeml1ZXZsaHo3" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a class="cs-btn" href="https://x.com/the24thdayy" target="_blank" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+          <a class="cs-btn" href="https://pin.it/4VQvZR44M" target="_blank" aria-label="Pinterest"><i class="fa-brands fa-pinterest"></i></a>
+          <a class="cs-btn" href="https://linktr.ee/the24thdayy" target="_blank" aria-label="Linktree"><i class="fa-solid fa-tree"></i></a>
+          <a class="cs-btn" href="mailto:epiphanyoarhe13@gmail.com" aria-label="Email"><i class="fa-regular fa-envelope"></i></a>
+        </div>
+      </div>
+
+      <!-- Right: form -->
+      <div class="contact-right reveal">
+        <h3 class="form-eyebrow">Your Details</h3>
+        <p class="form-sub">Let us know how to get back to you.</p>
+        <form class="contact-form" action="https://formspree.io/f/mkokkgbv" method="POST">
+          <div class="f-row">
+            <div class="f-group"><label for="name">Name <span>*</span></label><input name="name" type="text" id="f-name" placeholder="Your name" /></div>
+            <div class="f-group"><label for="email">Email Address <span>*</span></label><input name="email" type="email" id="f-email" placeholder="email@email.com" /></div>
+          </div>
+          <div class="f-group"><label for="subject">Subject <span>*</span></label><input name="subject" type="text" id="f-subject" placeholder="Subject" /></div>
+          <div class="f-group"><label for="message">Comments / Questions <span>*</span></label><textarea name="message" id="f-message" rows="6" placeholder="Message"></textarea></div>
+          <button class="f-submit" id="f-submit" type="button">Contact Me</button>
+          <p id="form-msg"></p>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="#hero" class="footer-logo">EPIPHANY OARHE</a>
+    <p>&copy; <span id="yr"></span> The24thdayy. All rights reserved.</p>
+    <p style="opacity:.35;">Made with craft &amp; intention.</p>
+  </footer>
+
+  <!-- LIGHTBOX — two-panel: image left, details right -->
+  <div id="lightbox" role="dialog" aria-modal="true" aria-label="Artwork detail">
+    <button id="lb-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    <div class="lb-content">
+
+      <!-- Left: image -->
+      <div class="lb-image-panel">
+        <img id="lb-img" src="" alt="" />
+      </div>
+
+      <!-- Right: details -->
+      <div class="lb-detail-panel">
+        <button class="lb-back" id="lb-back"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <h2 id="lb-title"></h2>
+        <div class="lb-rule"></div>
+        <dl class="lb-meta-grid">
+          <dt>Medium</dt>
+          <dd id="lb-medium"></dd>
+          <dt>Year</dt>
+          <dd id="lb-year"></dd>
+          <dt>Category</dt>
+          <dd id="lb-category">Digital Painting</dd>
+        </dl>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BACK TO TOP -->
+  <button id="back-top" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+
+  <!-- ════════════════════ JAVASCRIPT ════════════════════ -->
+  <script>
+  /* ══════════════════════════════════════════════════════
+     JAVASCRIPT
+  ══════════════════════════════════════════════════════ */
+
+  /* ── 1. PAINTBRUSH CURSOR ────────────────────────────
+     Desktop only (skips early if viewport ≤900px).
+     Tracks mousemove to position the SVG cursor at the
+     bristle tip. Simultaneously draws a fading painted
+     stroke trail on a full-page canvas. Trail points
+     decay in opacity each frame and are pruned once
+     fully transparent. Colour cycles slowly through the
+     site's gold/rust/olive palette.
+  ─────────────────────────────────────────────────────── */
+  (function () {
+    if (window.innerWidth <= 900) return;
+
+    const cur    = document.getElementById('brush-cursor');
+    const canvas = document.getElementById('brush-canvas');
+    const ctx    = canvas.getContext('2d');
+
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    // Trail points
+    const trail  = [];
+    const MAXPTS = 48;
+    const FADE   = 0.013;
+
+    let mx = -999, my = -999, px = -999, py = -999;
+
+    // Paint palette — stays within site colours
+    const colors = ['184,150,46','158,46,18','78,70,24','212,176,80','120,80,18'];
+    let   colorIdx = 0, colorTick = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      px = mx; py = my;
+      mx = e.clientX; my = e.clientY;
+
+      // Move SVG cursor (offset: tip of bristles = bottom centre)
+      cur.style.transform = `translate(${mx - 6}px, ${my - 28}px) rotate(-35deg)`;
+
+      const dx = mx - px, dy = my - py;
+      const spd = Math.sqrt(dx * dx + dy * dy);
+      const w   = Math.max(1.5, 6 - spd * 0.1); // slower = thicker
+
+      trail.push({ x: mx, y: my, alpha: 0.55, w });
+      if (trail.length > MAXPTS) trail.shift();
+    });
+
+    function draw() {
+      // Full clear each frame — eliminates ghost streaks permanently
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (trail.length < 2) { requestAnimationFrame(draw); return; }
+
+      // Slowly cycle colour
+      if (++colorTick > 55) { colorIdx = (colorIdx + 1) % colors.length; colorTick = 0; }
+      const col = colors[colorIdx];
+
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      for (let i = 1; i < trail.length; i++) {
+        const a = trail[i], b = trail[i - 1];
+        const prog = i / trail.length;           // 0=old, 1=newest
+        const alpha = a.alpha * prog * 0.72;
+        const width = a.w * prog;
+
+        ctx.beginPath();
+        ctx.moveTo(b.x, b.y);
+        ctx.lineTo(a.x, a.y);
+        ctx.lineWidth   = Math.max(0.4, width);
+        ctx.strokeStyle = `rgba(${col},${alpha})`;
+        ctx.stroke();
+
+        // Decay
+        trail[i].alpha = Math.max(0, trail[i].alpha - FADE);
+      }
+      while (trail.length && trail[0].alpha <= 0) trail.shift();
+
+      requestAnimationFrame(draw);
+    }
+    draw();
+
+    document.addEventListener('mouseleave', () => { cur.style.opacity = '0'; });
+    document.addEventListener('mouseenter', () => { cur.style.opacity = '1'; });
+  })();
+
+  /* ── 2. HERO SLIDESHOW ──────────────────────────────────
+     Cycles through hero images by toggling the .active
+     class every 4.8 seconds. CSS handles the crossfade
+     transition via opacity and scale.
+  ─────────────────────────────────────────────────────── */
+  (function() {
+    const slides = document.querySelectorAll('.hero-slide');
+    let current = 0;
+    function nextSlide() {
+      slides[current].classList.remove('active');
+      current = (current + 1) % slides.length;
+      slides[current].classList.add('active');
+    }
+    setInterval(nextSlide, 4800);
+  })();
+
+  /* ── 3. NAVIGATION ───────────────────────────────────────
+     Adds a frosted-glass background to the nav bar once
+     the page scrolls past 30px. Also shows/hides the
+     Back-to-Top button at 500px. The mobile drawer opens
+     on hamburger click and closes on the ✕ button or any
+     drawer link click.
+  ─────────────────────────────────────────────────────── */
+  const nav     = document.getElementById('nav');
+  const drawer  = document.getElementById('nav-drawer');
+  const backTop = document.getElementById('back-top');
+
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('bg', window.scrollY > 30);
+    backTop.classList.toggle('show', window.scrollY > 500);
+  }, { passive: true });
+
+  const navToggle = document.getElementById('nav-toggle');
+
+  function openDrawer() {
+    drawer.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    navToggle.setAttribute('aria-expanded', 'true');
+  }
+  function closeDrawer() {
+    drawer.classList.remove('open');
+    document.body.style.overflow = '';
+    navToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  navToggle.addEventListener('click', () => {
+    drawer.classList.contains('open') ? closeDrawer() : openDrawer();
+  });
+  document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+  drawer.querySelectorAll('.dl').forEach(l => l.addEventListener('click', closeDrawer));
+
+  /* ── 4. SCROLL REVEAL ────────────────────────────────────
+     Strategy: .reveal elements are fully visible by default
+     (opacity:1, no transform via CSS). On the first observer
+     callback, any element that is below 92% of the viewport
+     gets .will-animate (hidden + translated down). As each
+     element scrolls into view it receives .visible, which
+     transitions it back to its natural state. An 800ms
+     fallback forces all elements visible in case the observer
+     fires late (e.g. on very slow connections).
+  ─────────────────────────────────────────────────────── */
+  const revEls = Array.from(document.querySelectorAll('.reveal'));
+  let obsLive  = false;
+
+  const obs = new IntersectionObserver((entries) => {
+    if (!obsLive) {
+      obsLive = true;
+      revEls.forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.top > window.innerHeight * 0.92) el.classList.add('will-animate');
+      });
+    }
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.01 });
+
+  revEls.forEach(el => obs.observe(el));
+
+  setTimeout(() => {
+    if (!obsLive) revEls.forEach(el => el.classList.add('visible'));
+  }, 800);
+
+  /* ── 5. DESKTOP SHOW-MORE / SHOW-LESS ───────────────────
+     Clips the gallery wrapper to reveal one full row plus a
+     33% peek of the next row. Each "Show More" click unlocks
+     one additional row. "Show Less" resets to the initial
+     state and scrolls back to the section top. The fade veil
+     overlaid on the partial row is shown/hidden accordingly.
+  ─────────────────────────────────────────────────────── */
+  (function() {
+    const wrapper   = document.getElementById('gallery-wrapper');
+    const grid      = document.getElementById('gallery-grid');
+    const veil      = document.getElementById('gallery-fade-veil');
+    const btnMore   = document.getElementById('btn-show-more');
+    const btnLess   = document.getElementById('btn-show-less');
+
+    // How many rows are currently "unlocked" (starts at 1 full + peek of 2nd)
+    let unlockedRows = 1; // 1 = show row1 fully + peek row2; 2 = rows 1+2 + peek row3; etc.
+
+    function getRowHeight() {
+      // Approximate height of one row (columns layout — use first item)
+      const first = grid.querySelector('.gallery-item');
+      return first ? first.offsetHeight + 14 : 300; // 14 = gap
+    }
+
+    function getVisibleItems() {
+      return Array.from(grid.querySelectorAll('.gallery-item')).filter(
+        el => el.style.display !== 'none'
+      );
+    }
+
+    function totalRows(items) {
+      return Math.ceil(items.length / 3);
+    }
+
+    window.initGalleryReveal = function() {
+      if (window.innerWidth <= 560) return;
+      const items  = getVisibleItems();
+      const rows   = totalRows(items);
+      const rowH   = getRowHeight();
+
+      // clamp unlockedRows
+      if (unlockedRows >= rows) {
+        unlockedRows = rows;
+      }
+
+      const fullRows    = unlockedRows;
+      const peekFrac    = 0.33; // show 33% of the next row
+      const hasMore     = fullRows < rows;
+
+      const revealH     = fullRows * rowH + (hasMore ? rowH * peekFrac : 0);
+      const gridTotal   = grid.scrollHeight;
+
+      // clip the wrapper
+      wrapper.style.maxHeight = revealH + 'px';
+      wrapper.style.overflow  = 'hidden';
+      wrapper.style.transition= 'max-height .65s cubic-bezier(.4,0,.2,1)';
+
+      if (hasMore) {
+        // veil covers the partial row
+        const veilH = rowH * peekFrac + 8;
+        veil.style.height  = veilH + 'px';
+        veil.style.opacity = '1';
+        btnMore.style.display = 'inline-flex';
+      } else {
+        veil.style.opacity = '0';
+        btnMore.style.display = 'none';
+      }
+
+      btnLess.style.display = unlockedRows > 1 ? 'inline-flex' : 'none';
+    };
+
+    btnMore.addEventListener('click', () => {
+      const items = getVisibleItems();
+      const rows  = totalRows(items);
+      if (unlockedRows < rows) {
+        unlockedRows++;
+        initGalleryReveal();
+      }
+    });
+
+    btnLess.addEventListener('click', () => {
+      unlockedRows = 1;
+      initGalleryReveal();
+      // scroll back to the section top so user isn't stranded
+      document.getElementById('artworks').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // Init after a tick so layout is ready
+    setTimeout(initGalleryReveal, 120);
+    window.addEventListener('resize', initGalleryReveal, { passive: true });
+  })();
+
+  /* ── 6. LIGHTBOX ─────────────────────────────────────────
+     Opens a two-panel overlay: artwork image on the left,
+     title + medium/year/category details on the right.
+     Populated from the clicked item's data attributes and
+     img src. Closes via ✕, the Back button, backdrop click,
+     or Escape key.
+  ─────────────────────────────────────────────────────── */
+  const lb         = document.getElementById('lightbox');
+  const lbImg      = document.getElementById('lb-img');
+  const lbTitle    = document.getElementById('lb-title');
+  const lbMedium   = document.getElementById('lb-medium');
+  const lbYear     = document.getElementById('lb-year');
+  const lbCategory = document.getElementById('lb-category');
+
+  function openLightbox(item) {
+    const imgEl = item.querySelector('.artwork-img img');
+    lbImg.src     = imgEl ? imgEl.src : '';
+    lbImg.alt     = item.dataset.title || '';
+    lbTitle.textContent    = item.dataset.title    || '';
+    lbMedium.textContent   = item.dataset.medium   || '—';
+    lbYear.textContent     = item.dataset.year     || 'N/A';
+    lbCategory.textContent = item.dataset.category || 'Digital Painting';
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  // Desktop grid items — click opens lightbox
+  const galleryItems = document.querySelectorAll('.gallery-item');
+  galleryItems.forEach(item => {
+    item.addEventListener('click', () => openLightbox(item));
+  });
+
+  // Mobile carousel — only the active (centred) slide opens lightbox
+  document.querySelectorAll('.gc-slide').forEach(slide => {
+    slide.addEventListener('click', () => {
+      if (slide.classList.contains('gc-active')) openLightbox(slide);
+    });
+  });
+
+  function closeLb() { lb.classList.remove('open'); document.body.style.overflow = ''; }
+  document.getElementById('lb-close').addEventListener('click', closeLb);
+  document.getElementById('lb-back').addEventListener('click', closeLb);
+  lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
+
+  /* ── 6b. MOBILE GALLERY CAROUSEL ────────────────────────
+     Infinite-loop horizontal carousel for ≤560px screens.
+     Works by prepending a clone of the last slide and
+     appending a clone of the first, so the track can slide
+     seamlessly in both directions. When it reaches a clone,
+     it silently snaps to the real equivalent slide after the
+     CSS transition completes (730ms).
+     • advanceNext() handles forward auto-advance and the
+       clone-jump at the end of the real slide list.
+     • Touch swipe locks to the dominant axis so vertical
+       page scrolling still works as expected.
+     • Clicking a non-active slide navigates to it; clicking
+       the active slide opens the lightbox.
+  ─────────────────────────────────────────────────────── */
+  (function() {
+    const carousel = document.getElementById('gallery-carousel');
+    const track    = document.getElementById('gc-track');
+    if (!carousel || !track) return;
+
+    const origSlides = Array.from(track.querySelectorAll('.gc-slide'));
+    const TOTAL = origSlides.length;
+    let cur = 0;
+    let autoTimer;
+    let paused = false;
+
+    // Prepend clone of last slide + append clone of first for seamless loop
+    const cloneFirst = origSlides[0].cloneNode(true);
+    cloneFirst.setAttribute('aria-hidden', 'true');
+    const cloneLast  = origSlides[TOTAL - 1].cloneNode(true);
+    cloneLast.setAttribute('aria-hidden', 'true');
+    track.appendChild(cloneFirst);
+    track.insertBefore(cloneLast, origSlides[0]);
+
+    // All slides including clones. Real slides begin at DOM index 1 (index 0 = clone-of-last)
+    const allSlides = Array.from(track.querySelectorAll('.gc-slide'));
+
+    function slideWidth() {
+      return allSlides[1] ? allSlides[1].offsetWidth : window.innerWidth * 0.6;
+    }
+
+    function setActive(realIdx) {
+      // realIdx is 0-based among original slides
+      // actual DOM index = realIdx + 1 (because of prepended clone)
+      allSlides.forEach((s, i) => s.classList.toggle('gc-active', i === realIdx + 1));
+    }
+
+    function positionTrack(realIdx, instant) {
+      const domIdx   = realIdx + 1; // account for prepended clone
+      const sw       = slideWidth();
+      const offset   = domIdx * sw - (window.innerWidth / 2 - sw / 2);
+      track.style.transition = instant ? 'none' : 'transform .7s cubic-bezier(.4,0,.2,1)';
+      track.style.transform  = `translateX(-${offset}px)`;
+    }
+
+    function goTo(realIdx, instant) {
+      cur = realIdx;
+      setActive(cur);
+      positionTrack(cur, instant);
+    }
+
+    // Advance to the next real slide. When wrapping from last→first, we slide to
+    // the appended clone-of-first, then silently snap to the real first slide.
+    let isJumping = false;
+    function advanceNext() {
+      if (isJumping) return;
+      const nextReal = (cur + 1) % TOTAL;
+      if (nextReal === 0) {
+        // slide to clone-of-first (dom index TOTAL+1), then jump
+        const domIdx  = TOTAL + 1;
+        const sw      = slideWidth();
+        const offset  = domIdx * sw - (window.innerWidth / 2 - sw / 2);
+        track.style.transition = 'transform .7s cubic-bezier(.4,0,.2,1)';
+        track.style.transform  = `translateX(-${offset}px)`;
+        allSlides.forEach((s, i) => s.classList.toggle('gc-active', i === TOTAL + 1));
+        isJumping = true;
+        setTimeout(() => {
+          cur = 0;
+          positionTrack(0, true);
+          setActive(0);
+          isJumping = false;
+        }, 730);
+      } else {
+        cur = nextReal;
+        goTo(cur, false);
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(autoTimer);
+      autoTimer = setInterval(() => { if (!paused) advanceNext(); }, 6000);
+    }
+
+    // Init
+    goTo(0, true);
+    resetTimer();
+
+    // Pause on hover over active (focused) slide
+    carousel.addEventListener('mouseover', e => {
+      if (e.target.closest('.gc-slide.gc-active')) { paused = true; }
+    });
+    carousel.addEventListener('mouseout', e => {
+      if (e.target.closest('.gc-slide.gc-active')) { paused = false; }
+    });
+
+    // Touch swipe — axis is locked on first significant move so vertical
+    // page scroll still works. Horizontal swipes over 22% of the slide width commit.
+    let touchStartX = 0, touchStartY = 0, touchDeltaX = 0;
+    let isSwiping = false, swipeAxisLocked = false, swipeIsHorizontal = false;
+
+    carousel.addEventListener('touchstart', e => {
+      touchStartX  = e.touches[0].clientX;
+      touchStartY  = e.touches[0].clientY;
+      touchDeltaX  = 0;
+      isSwiping    = true;
+      swipeAxisLocked     = false;
+      swipeIsHorizontal   = false;
+      // pause auto-advance while finger is down
+      clearInterval(autoTimer);
+      // remove transition so the track follows the finger live
+      track.style.transition = 'none';
+    }, { passive: true });
+
+    carousel.addEventListener('touchmove', e => {
+      if (!isSwiping) return;
+      const dx = e.touches[0].clientX - touchStartX;
+      const dy = e.touches[0].clientY - touchStartY;
+
+      // lock scroll axis on first significant move
+      if (!swipeAxisLocked && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+        swipeIsHorizontal = Math.abs(dx) > Math.abs(dy);
+        swipeAxisLocked   = true;
+      }
+
+      if (!swipeIsHorizontal) return; // let the page scroll vertically
+      e.preventDefault(); // only block scroll for horizontal swipes
+      touchDeltaX = dx;
+
+      // Live drag: shift the track by dx relative to the snapped position
+      const sw     = slideWidth();
+      const domIdx = cur + 1;
+      const base   = domIdx * sw - (window.innerWidth / 2 - sw / 2);
+      track.style.transform = `translateX(${-(base - touchDeltaX)}px)`;
+    }, { passive: false });
+
+    carousel.addEventListener('touchend', () => {
+      if (!isSwiping) return;
+      isSwiping = false;
+      const threshold = slideWidth() * 0.22; // 22% of slide width to commit
+
+      if (Math.abs(touchDeltaX) > threshold && swipeIsHorizontal) {
+        if (touchDeltaX < 0) {
+          // swiped left → next
+          advanceNext();
+        } else {
+          // swiped right → previous
+          if (isJumping) { resetTimer(); return; }
+          const prevReal = (cur - 1 + TOTAL) % TOTAL;
+          if (cur === 0) {
+            // slide to clone-of-last (dom index 0), then jump
+            const sw     = slideWidth();
+            const offset = 0 * sw - (window.innerWidth / 2 - sw / 2);
+            track.style.transition = 'transform .7s cubic-bezier(.4,0,.2,1)';
+            track.style.transform  = `translateX(-${offset}px)`;
+            allSlides.forEach((s, i) => s.classList.toggle('gc-active', i === 0));
+            isJumping = true;
+            setTimeout(() => {
+              cur = TOTAL - 1;
+              positionTrack(cur, true);
+              setActive(cur);
+              isJumping = false;
+            }, 730);
+          } else {
+            cur = prevReal;
+            goTo(cur, false);
+          }
+        }
+      } else {
+        // snap back to current
+        positionTrack(cur, false);
+      }
+      resetTimer();
+    }, { passive: true });
+
+    // Click non-active slides → navigate to them
+    allSlides.forEach((slide, domIdx) => {
+      slide.addEventListener('click', e => {
+        if (!slide.classList.contains('gc-active')) {
+          e.stopPropagation();
+          // real index = domIdx - 1 (because of prepended clone), clamped
+          const realIdx = Math.max(0, Math.min(TOTAL - 1, domIdx - 1));
+          cur = realIdx;
+          goTo(cur, false);
+          resetTimer();
+        }
+      });
+    });
+
+    // Lightbox for carousel active slide
+    allSlides.forEach(slide => {
+      slide.addEventListener('click', () => {
+        if (slide.classList.contains('gc-active') && !slide.getAttribute('aria-hidden')) {
+          openLightbox(slide);
+        }
+      });
+    });
+
+    window.addEventListener('resize', () => positionTrack(cur, true), { passive: true });
+  })();
+
+  /* ── 7. TESTIMONIALS — INFINITE LOOP ────────────────────
+     Clones all cards and appends them to the track, enabling
+     a seamless forward loop. When the visible index reaches
+     the cloned zone (≥ TOTAL), the track is silently reset
+     to the matching real position. Dot indicators are built
+     dynamically and stay in sync via modulo arithmetic.
+     Auto-advances every 4.4 seconds; pauses on hover.
+  ─────────────────────────────────────────────────────── */
+  (function() {
+    const track    = document.getElementById('testi-track');
+    const dotsWrap = document.getElementById('testi-dots');
+    const origCards = Array.from(track.querySelectorAll('.testi-card'));
+    const TOTAL = origCards.length;
+
+    // Clone all original cards and append — the loop resets silently when we reach them
+    origCards.forEach(card => {
+      const clone = card.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      track.appendChild(clone);
+    });
+
+    // Build dot indicators for the original cards only
+    origCards.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.setAttribute('aria-label', 'Testimonial ' + (i + 1));
+      d.addEventListener('click', () => { goTo(i); resetTimer(); });
+      dotsWrap.appendChild(d);
+    });
+    const dots = dotsWrap.querySelectorAll('.dot');
+
+    let cur2 = 0, timer, isTransitioning = false;
+
+    function getCardWidth() {
+      const c = track.querySelector('.testi-card');
+      return c ? c.offsetWidth + 20 : 440;
+    }
+
+    function goTo(idx, skipTransition) {
+      cur2 = idx;
+      const cw = getCardWidth();
+      if (skipTransition) {
+        track.style.transition = 'none';
+      } else {
+        track.style.transition = 'transform .85s cubic-bezier(.4,0,.2,1)';
+      }
+      track.style.transform = `translateX(-${cur2 * cw}px)`;
+      // update dots (mod TOTAL)
+      const dotIdx = ((cur2 % TOTAL) + TOTAL) % TOTAL;
+      dots.forEach((d, i) => d.classList.toggle('active', i === dotIdx));
+    }
+
+    function next() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      goTo(cur2 + 1);
+
+      // After transition ends, silently reset to the real equivalent position if in clone zone
+      setTimeout(() => {
+        if (cur2 >= TOTAL) {
+          cur2 = cur2 % TOTAL;
+          goTo(cur2, true);
+        }
+        isTransitioning = false;
+      }, 900);
+    }
+
+    function resetTimer() { clearInterval(timer); timer = setInterval(next, 4400); }
+
+    goTo(0, true);
+    resetTimer();
+    track.addEventListener('mouseenter', () => clearInterval(timer));
+    track.addEventListener('mouseleave', resetTimer);
+    window.addEventListener('resize', () => goTo(cur2, true), { passive: true });
+  })();
+
+  /* ── 8. CONTACT FORM ─────────────────────────────────────
+     Submits the form to Formspree, which forwards the message
+     to epiphanyoarhe13@gmail.com. Validates all required
+     fields client-side first. The button shows a spinner
+     while the request is in-flight, then confirms success
+     or shows an error message depending on the response.
+
+     SETUP NOTE: Replace the Formspree endpoint URL below
+     with the one generated at https://formspree.io/f/new
+     after signing in and creating a form pointed at
+     epiphanyoarhe13@gmail.com.
+  ─────────────────────────────────────────────────────── */
+  const fMsg    = document.getElementById('form-msg');
+  const fSubmit = document.getElementById('f-submit');
+
+  fSubmit.addEventListener('click', async function () {
+    const name    = document.getElementById('f-name').value.trim();
+    const email   = document.getElementById('f-email').value.trim();
+    const subject = document.getElementById('f-subject').value.trim();
+    const msg     = document.getElementById('f-message').value.trim();
+
+    // Client-side validation
+    if (!name || !email || !subject || !msg) {
+      fMsg.style.color   = '#c0401a';
+      fMsg.style.display = 'block';
+      fMsg.textContent   = 'Please fill in all required fields.';
+      return;
+    }
+
+    // Basic email format check
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      fMsg.style.color   = '#c0401a';
+      fMsg.style.display = 'block';
+      fMsg.textContent   = 'Please enter a valid email address.';
+      return;
+    }
+
+    // Show sending state
+    this.disabled  = true;
+    this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+    fMsg.style.display = 'none';
+
+    /* ── Formspree endpoint ─────────────────────────────────────────────
+       To enable server-side delivery, sign up at https://formspree.io,
+       create a form pointed at epiphanyoarhe13@gmail.com, then replace
+       YOUR_FORM_ID below with the ID from your dashboard (e.g. xpwzabcd).
+       Until then the form falls back to opening the visitor’s email client.
+    ──────────────────────────────────────────────────────────────────── */
+    const FORMSPREE_ID = 'YOUR_FORM_ID'; // ← replace this
+
+    if (FORMSPREE_ID !== 'YOUR_FORM_ID') {
+      // ——— Formspree path (active once ID is set) ———
+      try {
+        const response = await fetch('https://formspree.io/f/' + FORMSPREE_ID, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ name, email, subject, message: msg })
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (response.ok) {
+          fMsg.style.color   = '#b8962e';
+          fMsg.style.display = 'block';
+          fMsg.textContent   = 'Message sent — Epiphany will be in touch soon.';
+          this.innerHTML     = '<i class="fa-solid fa-check"></i> Sent';
+          ['f-name','f-email','f-subject','f-message'].forEach(id => {
+            document.getElementById(id).value = '';
+          });
+        } else {
+          const reason = (data.errors && data.errors.map(e => e.message).join(', ')) || ('Error ' + response.status);
+          throw new Error(reason);
+        }
+      } catch (err) {
+        fMsg.style.color   = '#c0401a';
+        fMsg.style.display = 'block';
+        fMsg.textContent   = 'Something went wrong. Please try again or email directly at epiphanyoarhe13@gmail.com';
+        this.disabled  = false;
+        this.innerHTML = 'Send Message';
+      }
+
+    } else {
+      // ——— Mailto fallback (works always, zero setup) ———
+      const body = 'From: ' + name + ' (' + email + ')\n\n' + msg;
+      const mailto = 'mailto:epiphanyoarhe13@gmail.com'
+        + '?subject=' + encodeURIComponent(subject)
+        + '&body='    + encodeURIComponent(body);
+      window.location.href = mailto;
+
+      fMsg.style.color   = '#b8962e';
+      fMsg.style.display = 'block';
+      fMsg.textContent   = 'Your email app is opening with the message pre-filled — just hit send!';
+      this.disabled  = false;
+      this.innerHTML = 'Send Message';
+    }
+  });
+
+  /* ── 9. BACK TO TOP ──────────────────────────────────────
+     Smooth-scrolls to the top of the page. The button's
+     visibility is already toggled by the scroll listener
+     in the Navigation section above.
+  ─────────────────────────────────────────────────────── */
+  backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  /* ── 10. FOOTER YEAR ─────────────────────────────────────
+     Injects the current year into the copyright line so it
+     never needs to be manually updated.
+  ─────────────────────────────────────────────────────── */
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* ── 11. MOBILE FULL GALLERY OVERLAY ────────────────────
+     Builds a 1-per-row grid from the carousel slide data,
+     opens on "See Full Gallery" tap, closes via X button.
+     Each item shows the dark gradient overlay by default
+     and tapping opens the shared lightbox.
+  ─────────────────────────────────────────────────────── */
+  (function() {
+    const btn      = document.getElementById('see-gallery-btn');
+    const overlay  = document.getElementById('full-gallery-overlay');
+    const fgoGrid  = document.getElementById('fgo-grid');
+    const fgoClose = document.getElementById('fgo-close');
+    if (!btn || !overlay) return;
+
+    // Build grid items from carousel slides
+    const slides = document.querySelectorAll('#gc-track .gc-slide');
+    slides.forEach(slide => {
+      const imgEl  = slide.querySelector('.artwork-img img');
+      const title  = slide.dataset.title  || '';
+      const year   = slide.dataset.year   || '';
+      const medium = slide.dataset.medium || 'Digital Painting';
+
+      const item = document.createElement('div');
+      item.className = 'fgo-item';
+      // Copy data attributes so openLightbox can read them
+      item.dataset.title  = title;
+      item.dataset.year   = year;
+      item.dataset.medium = medium;
+
+      item.innerHTML = `
+        <div class="artwork-img">
+          ${imgEl ? `<img src="${imgEl.src}" alt="${imgEl.alt}" loading="lazy"/>` : ''}
+        </div>
+        <div class="artwork-overlay">
+          <i class="fa-solid fa-expand"></i>
+          <h3>${title}</h3>
+          <p>${medium} &bull; ${year}</p>
+          <span class="overlay-learn"><i class="fa-solid fa-arrow-up-right-from-square"></i>Learn More</span>
+        </div>`;
+
+      item.addEventListener('click', () => openLightbox(item));
+      fgoGrid.appendChild(item);
+    });
+
+    function openFGO() {
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      overlay.scrollTop = 0;
+    }
+
+    function closeFGO() {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    btn.addEventListener('click', openFGO);
+    fgoClose.addEventListener('click', closeFGO);
+
+    // Close on backdrop tap (tapping outside the grid header area)
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) closeFGO();
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) closeFGO();
+    });
+  })();
+  </script>
+</body>
+</html>
